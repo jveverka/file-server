@@ -76,9 +76,13 @@ public class FileServiceImpl implements FileService {
                     if (resolvedFilePath.endsWith(fw)) {
                         //skip parent directory
                     } else if (Files.isDirectory(fw)) {
-                        fileList.add(new DirectoryInfo(fw.getFileName().toString()));
+                        File file = fw.toFile();
+                        fileList.add(new DirectoryInfo(fw.getFileName().toString(), file.lastModified()));
+                    } else if (Files.isRegularFile(fw)) {
+                        File file = fw.toFile();
+                        fileList.add(new FileInfo(fw.getFileName().toString(), file.length(), file.lastModified()));
                     } else {
-                        fileList.add(new FileInfo(fw.getFileName().toString()));
+                        LOG.error("getFilesInfo skipped: {} is not regular file nor directory !", filePath.toString());
                     }
                 }
             });
