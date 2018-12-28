@@ -29,11 +29,11 @@ user access control and security.
 * dynamic user access management (local database required)
 
 ## Requirements for developers
-* [JDK 11](https://jdk.java.net/11/) or later (JDK 10 is supported as well)
+* [JDK 11](https://jdk.java.net/11/) or later (JDK 8 is supported as well)
 * [Gradle 5.0](https://gradle.org/next-steps/?version=5.0&format=bin) or later
 
 ## Runtime requirements
-* [JDK 11](https://jdk.java.net/11/) or later (JDK 10 is supported as well)
+* [JDK 11](https://jdk.java.net/11/) or later (JDK 8 is supported as well)
 
 ### Rest Endpoints
 All REST endpoints use 'dynamic' path. This means that path ``**`` is used as relative path in *base directory*.  
@@ -71,5 +71,5 @@ See this [example](src/main/resources/application.yml) of server configuration.
 Variable ``file.server.home`` in ``application.yml`` file defines *base directory* to be exposed via REST APIs.
 ```
 gradle clean build test
-java -jar build/libs/springboot-fileserver-1.0.1-SNAPSHOT.jar --spring.config.location=file:./src/main/resources/application.yml
+java -jar build/libs/file-server-1.0.1-SNAPSHOT.jar --spring.config.location=file:./src/main/resources/application.yml
 ```

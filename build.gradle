@@ -13,15 +13,16 @@ buildscript {
 }
 
 apply plugin: 'java'
-apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 group = 'itx.examples.springboot.fileserver'
 version = '1.0.1-SNAPSHOT'
 
-sourceCompatibility = 10
-targetCompatibility = 10
+//source compatibility set to java8 because travis CI does not support java11 and gradle support
+//once travis CI is fixed, source compatibility may be bumped to 11
+sourceCompatibility = 8
+targetCompatibility = 8
 
 repositories {
 	mavenCentral()
@@ -32,7 +33,6 @@ repositories {
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('junit:junit:4.12')
 	testCompile('org.mockito:mockito-core:2.23.4')
 }
