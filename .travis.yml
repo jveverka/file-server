@@ -1,4 +1,6 @@
 language: java
 jdk:
-  - openjdk11
+  - openjdk10
+before_install:
+  - gradle -version
 script: gradle clean build test
