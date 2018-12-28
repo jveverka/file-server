@@ -6,6 +6,7 @@ import itx.fileserver.services.FileService;
 import itx.fileserver.services.OperationNotAllowedException;
 import itx.fileserver.services.SecurityService;
 import itx.fileserver.services.dto.FileList;
+import itx.fileserver.services.dto.FileStorageInfo;
 import itx.fileserver.services.dto.RoleId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,6 @@ public class FileServerController {
     public static final String MOVE_PREFIX = "/move/";
 
     private final FileService fileService;
-    private final FileAccessService fileAccessService;
     private final SecurityService securityService;
 
     @Autowired
@@ -55,10 +55,15 @@ public class FileServerController {
 
     @Autowired
     public FileServerController(FileService fileService,
-                                FileAccessService fileAccessService, SecurityService securityService) {
+                                SecurityService securityService) {
         this.fileService = fileService;
-        this.fileAccessService = fileAccessService;
         this.securityService = securityService;
+    }
+
+    @GetMapping("/storageinfo")
+    public ResponseEntity<FileStorageInfo> getStorageInfo() {
+        LOG.info("getStorageInfo:");
+        return ResponseEntity.ok().body(fileService.getFileStorageInfo());
     }
 
     @GetMapping(DOWNLOAD_PREFIX + "**")

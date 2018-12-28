@@ -32,7 +32,7 @@ public class FileServerITTest {
             NamedBeanHolder<FileService> fileAccessServiceNamedBeanHolder =
                     context.get().getAutowireCapableBeanFactory().resolveNamedBean(FileService.class);
             fileService = fileAccessServiceNamedBeanHolder.getBeanInstance();
-            basePath = fileService.getBasePath();
+            basePath = fileService.getFileStorageInfo().getBasePath();
             LOG.info("Test basePath: {}", basePath.toString());
         } else {
             Assert.fail();

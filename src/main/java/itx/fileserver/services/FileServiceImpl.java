@@ -4,6 +4,7 @@ import itx.fileserver.config.FileServerConfig;
 import itx.fileserver.services.dto.DirectoryInfo;
 import itx.fileserver.services.dto.FileInfo;
 import itx.fileserver.services.dto.FileList;
+import itx.fileserver.services.dto.FileStorageInfo;
 import itx.fileserver.services.dto.RoleId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,8 +44,9 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public Path getBasePath() {
-        return fileStorageLocation;
+    public FileStorageInfo getFileStorageInfo() {
+        File home = fileStorageLocation.toFile();
+        return new FileStorageInfo(fileStorageLocation, home.getFreeSpace(), home.getTotalSpace());
     }
 
     @Override

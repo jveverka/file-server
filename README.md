@@ -39,9 +39,16 @@ user access control and security.
 ### Rest Endpoints
 All REST endpoints use 'dynamic' path. This means that path ``**`` is used as relative path in *base directory*.
 See also [postman collection example](docs/FileServer.postman_collection.json).
-  
+
+#### Get volume info
+* __GET__ http://localhost:8888/services/files/storageinfo - get info about storage (storage base path, free space and total space)  
+  ``curl -X GET http://localhost:8888/services/files/storageinfo -b /tmp/cookies.txt``
+
+#### Get list of files  
 * __GET__ http://localhost:8888/services/files/list/** - list content directory or subdirectory  
   ``curl -X GET http://localhost:8888/services/files/list/ -b /tmp/cookies.txt``
+
+#### Download file  
 * __GET__ http://localhost:8888/services/files/download/** - download file on path. file must exist.   
   ``curl -X GET http://localhost:8888/services/files/list/path/to/001-data.txt -b /tmp/cookies.txt``
 

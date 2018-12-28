@@ -72,7 +72,7 @@
 		{
 			"name": "Delete file or directory",
 			"request": {
-				"url": "http://localhost:8888/services/files/move/somefileordirectory",
+				"url": "http://localhost:8888/services/files/delete/somefileordirectory",
 				"method": "DELETE",
 				"header": [],
 				"body": {},
@@ -119,6 +119,17 @@
 						}
 					]
 				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get file storage info",
+			"request": {
+				"url": "http://localhost:8888/services/files/storageinfo",
+				"method": "GET",
+				"header": [],
+				"body": {},
 				"description": ""
 			},
 			"response": []

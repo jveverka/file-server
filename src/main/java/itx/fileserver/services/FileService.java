@@ -1,6 +1,7 @@
 package itx.fileserver.services;
 
 import itx.fileserver.services.dto.FileList;
+import itx.fileserver.services.dto.FileStorageInfo;
 import itx.fileserver.services.dto.RoleId;
 import org.springframework.core.io.Resource;
 
@@ -16,10 +17,10 @@ import java.util.Set;
 public interface FileService {
 
     /**
-     * Get base path used by this service for all file system operations.
-     * @return absolute path to base directory.
+     * Get info about file storage.
+     * @return
      */
-    Path getBasePath();
+    FileStorageInfo getFileStorageInfo();
 
     /**
      * Create {@link Resource} for given file.
