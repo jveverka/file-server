@@ -21,8 +21,8 @@ version = '1.0.1-SNAPSHOT'
 
 //source compatibility set to java8 because travis CI does not support java11 and gradle support
 //once travis CI is fixed, source compatibility may be bumped to 11
-sourceCompatibility = 8
-targetCompatibility = 8
+sourceCompatibility = 10
+targetCompatibility = 10
 
 repositories {
 	mavenCentral()
