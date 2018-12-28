@@ -119,6 +119,26 @@ public class FileServiceImpl implements FileService {
         Files.createDirectories(resolvedFilePath);
     }
 
+    @Override
+    public void move(Set<RoleId> roles, Path sourcePath, Path destinationPath) throws IOException, OperationNotAllowedException {
+        LOG.info("move: {}->{}", sourcePath, destinationPath);
+        verifyReadAndWriteAccess(roles, sourcePath);
+        verifyReadAndWriteAccess(roles, destinationPath);
+        Path resolvedSourcePath = this.fileStorageLocation.resolve(sourcePath).normalize();
+        Path resolvedDestinationPath = this.fileStorageLocation.resolve(destinationPath).normalize();
+        if (Files.isRegularFile(resolvedSourcePath)) {
+            LOG.info("moving file {}->{}", sourcePath.toString(), destinationPath.toString());
+            Files.move(resolvedSourcePath, resolvedDestinationPath);
+        } else if (Files.isDirectory(resolvedSourcePath)) {
+            LOG.info("moving directory {}->{}", sourcePath.toString(), destinationPath.toString());
+            Files.move(resolvedSourcePath, resolvedDestinationPath);
+        } else {
+            LOG.error("source must be both file or directory");
+            throw new OperationNotAllowedException();
+        }
+
+    }
+
     private void verifyReadAccess(Set<RoleId> roles, Path filePath) throws OperationNotAllowedException {
         if (!fileAccessService.canRead(roles, filePath)) {
             throw new OperationNotAllowedException();

@@ -2,7 +2,7 @@
 
 # FileServer 
 This FileServer makes specified *base directory* accessible via REST APIs allowing you 
-to list, download, upload and delete files and create empty directories. It also provides 
+to list, download, upload, move and delete files and create empty directories. It also provides 
 user access control and security.
 
 ![architecture](docs/architecture-01.svg)
@@ -16,10 +16,11 @@ user access control and security.
   - download file, upload file
   - create empty directory
   - delete file or directory
+  - move file or directory
 * Uses Role based access control 
 * Supports multi-tenancy (many users and roles) 
-* http or https transport
-* requires read/write access to local file system.  
+* Transport protocols: http or https
+* Requires read/write access to local file system.  
 
 ## Planned features
 * web UI / web client for REST APIs
@@ -36,7 +37,9 @@ user access control and security.
 * [JDK 11](https://jdk.java.net/11/) or later (JDK 8 is supported as well)
 
 ### Rest Endpoints
-All REST endpoints use 'dynamic' path. This means that path ``**`` is used as relative path in *base directory*.  
+All REST endpoints use 'dynamic' path. This means that path ``**`` is used as relative path in *base directory*.
+See also [postman collection example](docs/FileServer.postman_collection.json).
+  
 * __GET__ http://localhost:8888/services/files/list/** - list content directory or subdirectory  
   ``curl -X GET http://localhost:8888/services/files/list/ -b /tmp/cookies.txt``
 * __GET__ http://localhost:8888/services/files/download/** - download file on path. file must exist.   
@@ -53,6 +56,10 @@ All REST endpoints use 'dynamic' path. This means that path ``**`` is used as re
 #### Create empty directory
 * __POST__ http://localhost:8888/services/files/createdir/** - create empty directory  
   ``curl -X POST http://localhost:8888/services/files/createdir/path/to/directory -b /tmp/cookies.txt``
+
+#### Move file or directory
+* __POST__ http://localhost:8888/services/files/move/** - move file or directory. If source is file, destination must be also a file, If source is directory, destination must be directory as well.
+  ``curl -X POST http://localhost:8888/services/files/move/path/to/source -b /tmp/cookies.txt -d '{ "destinationPath": "path/to/destination" }''``
 
 ### Security
 In order to use file server REST endpoints above, user's http session must be authorized.

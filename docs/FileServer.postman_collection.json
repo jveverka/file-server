@@ -48,6 +48,80 @@
 				"description": ""
 			},
 			"response": []
+		},
+		{
+			"name": "Move file or directory",
+			"request": {
+				"url": "http://localhost:8888/services/files/move/source",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"destinationPath\": \"destination\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete file or directory",
+			"request": {
+				"url": "http://localhost:8888/services/files/move/somefileordirectory",
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create empty directory",
+			"request": {
+				"url": "http://localhost:8888/services/files/createdir/directoryname",
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Download file ",
+			"request": {
+				"url": "http://localhost:8888/services/files/download/filename",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Upload File",
+			"request": {
+				"url": "http://localhost:8888/services/files/upload/targetdirectory",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"value": "",
+							"description": "",
+							"type": "file"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
 		}
 	]
 }
