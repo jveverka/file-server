@@ -20,7 +20,7 @@ user access control and security.
 * Uses Role based access control 
 * Supports multi-tenancy (many users and roles) 
 * Transport protocols: http or https
-* Requires read/write access to local file system.  
+* Single jar distribution (~16MB).  
 
 ## Planned features
 * web UI / web client for REST APIs
@@ -35,6 +35,7 @@ user access control and security.
 
 ## Runtime requirements
 * [JDK 11](https://jdk.java.net/11/) or later (JDK 8 is supported as well)
+* Requires read/write access to *base directory* on local file system.
 
 ### Rest Endpoints
 All REST endpoints use 'dynamic' path. This means that path ``**`` is used as relative path in *base directory*.
