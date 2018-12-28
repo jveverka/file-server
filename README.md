@@ -1,2 +1,73 @@
-# file-server
-File server providing REST APIs to access remote file system.
+# FileServer 
+This FileServer makes specified *base directory* accessible via REST APIs allowing you 
+to list, download, upload and delete files and create empty directories. It also provides 
+user access control and security.
+
+![architecture](docs/architecture-01.svg)
+
+## Features implemented
+* Standalone java server, running on linux system.
+* Runs on the top of file system of host server.
+* Provides access via REST APIs to the file system.
+* File system operations supported
+  - list / read content of the directory
+  - download file, upload file
+  - create empty directory
+  - delete file or directory
+* Uses Role based access control 
+* Supports multi-tenancy (many users and roles) 
+* http or https transport
+* requires read/write access to local file system.  
+
+## Planned features
+* web UI / web client for REST APIs
+* admin UI for user access management (users and roles)
+* compressed directory download
+* compressed directory upload
+* dynamic user access management (local database required)
+
+## Requirements for developers
+* [JDK 11](https://jdk.java.net/11/) or later (JDK 10 is supported as well)
+* [Gradle 5.0](https://gradle.org/next-steps/?version=5.0&format=bin) or later
+
+## Runtime requirements
+* [JDK 11](https://jdk.java.net/11/) or later (JDK 10 is supported as well)
+
+### Rest Endpoints
+All REST endpoints use 'dynamic' path. This means that path ``**`` is used as relative path in *base directory*.  
+* __GET__ http://localhost:8888/services/files/list/** - list content directory or subdirectory  
+  ``curl -X GET http://localhost:8888/services/files/list/ -b /tmp/cookies.txt``
+* __GET__ http://localhost:8888/services/files/download/** - download file on path. file must exist.   
+  ``curl -X GET http://localhost:8888/services/files/list/path/to/001-data.txt -b /tmp/cookies.txt``
+
+#### Upload file
+* __POST__ http://localhost:8888/services/files/upload/** - upload file, parent directory(ies) must exist before upload  
+ ``curl -F 'file=@/local/path/to/file.txt' http://localhost:8888/services/files/upload/path/to/001-data.txt -b /tmp/cookies.txt``
+
+#### Delete files and/or directories
+* __DELETE__ http://localhost:8888/services/files/delete/** - delete file or directory  
+  ``curl -X DELETE http://localhost:8888/services/files/delete/path/to/001-data.txt -b /tmp/cookies.txt``
+
+#### Create empty directory
+* __POST__ http://localhost:8888/services/files/createdir/** - create empty directory  
+  ``curl -X POST http://localhost:8888/services/files/createdir/path/to/directory -b /tmp/cookies.txt``
+
+### Security
+In order to use file server REST endpoints above, user's http session must be authorized.
+Users have defined their roles and access rights to files and directories. 
+See this [example](src/main/resources/application.yml) of server configuration.
+
+#### login
+* __POST__ http://localhost:8888/services/auth/login  
+  ``curl -X POST http://localhost:8888/services/auth/login -H "Content-Type: application/json" -d '{ "userName": "master", "password": "secret" }' -c /tmp/cookies.txt``
+
+#### logout
+* __GET__ http://localhost:8888/services/auth/logout  
+  ``curl -X GET http://localhost:8888/services/auth/logout -b /tmp/cookies.txt``
+
+### Build and Run
+Variable ``file.server.home`` in ``application.yml`` file defines *base directory* to be exposed via REST APIs.
+```
+gradle clean build test
+java -jar build/libs/springboot-fileserver-1.0.1-SNAPSHOT.jar --spring.config.location=file:./src/main/resources/application.yml
+```

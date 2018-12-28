@@ -1,0 +1,62 @@
+
+server:
+  port: 8888
+#  port: 8443
+#  ssl:
+#    key-store: classpath:keystore.jks
+#    key-store-password: secret
+#    keyStoreType: JKS
+#    keyAlias: localhost
+
+fileserver:
+   home: /home/juraj/Downloads
+   users:
+     - username: master
+       password: secret
+       roles:
+         - master
+         - public
+     - username: public
+       password: secret
+       roles:
+         - public
+     - username: jane
+       password: secret
+       roles:
+         - public
+         - jane
+     - username: joe
+       password: secret
+       roles:
+         - public
+         - joe
+   filters:
+     - path: '*'
+       access: READ_WRITE
+       roles:
+         - master
+     - path: 'public/*'
+       access: READ_WRITE
+       roles:
+         - public
+     - path: 'jane/*'
+       access: READ_WRITE
+       roles:
+         - jane
+     - path: 'joe/*'
+       access: READ_WRITE
+       roles:
+         - joe
+     - path: 'joe/for-jane/*'
+       access: READ_WRITE
+       roles:
+         - joe
+         - jane
+     - path: 'joe/for-everybody/*'
+       access: READ
+       roles:
+         - public
+     - path: 'joe/for-everybody/*'
+       access: READ_WRITE
+       roles:
+         - joe
