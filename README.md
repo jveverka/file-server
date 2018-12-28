@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jveverka/file-server.svg?branch=master)](https://travis-ci.org/jveverka/file-server)
+
 # FileServer 
 This FileServer makes specified *base directory* accessible via REST APIs allowing you 
 to list, download, upload and delete files and create empty directories. It also provides 
