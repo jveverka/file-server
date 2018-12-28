@@ -16,7 +16,7 @@ apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
-group = 'itx.examples.springboot.fileserver'
+group = 'itx.fileserver'
 version = '1.0.1-SNAPSHOT'
 
 //source compatibility set to java8 because travis CI does not support java11 and gradle support
