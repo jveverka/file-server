@@ -8,131 +8,298 @@
 	},
 	"item": [
 		{
-			"name": "Get files and directories in base path",
-			"request": {
-				"url": "http://localhost:8888/services/files/list/",
-				"method": "GET",
-				"header": [],
-				"body": {},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Login",
-			"request": {
-				"url": "http://localhost:8888/services/auth/login/",
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
+			"name": "admin-users",
+			"description": "",
+			"item": [
+				{
+					"name": "Get all users",
+					"request": {
+						"url": "http://localhost:8888/services/admin/users/all",
+						"method": "GET",
+						"header": [],
+						"body": {},
 						"description": ""
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"userName\": \"master\",\n\t\"password\": \"secret\"\n}"
+					},
+					"response": []
 				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Logout",
-			"request": {
-				"url": "http://localhost:8888/services/auth/logout/",
-				"method": "GET",
-				"header": [],
-				"body": {},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Move file or directory",
-			"request": {
-				"url": "http://localhost:8888/services/files/move/source",
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
+				{
+					"name": "Get admin role id",
+					"request": {
+						"url": "http://localhost:8888/services/admin/users/role/admin",
+						"method": "GET",
+						"header": [],
+						"body": {},
 						"description": ""
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"destinationPath\": \"destination\"\n}"
+					},
+					"response": []
 				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Delete file or directory",
-			"request": {
-				"url": "http://localhost:8888/services/files/delete/somefileordirectory",
-				"method": "DELETE",
-				"header": [],
-				"body": {},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Create empty directory",
-			"request": {
-				"url": "http://localhost:8888/services/files/createdir/directoryname",
-				"method": "POST",
-				"header": [],
-				"body": {},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Download file ",
-			"request": {
-				"url": "http://localhost:8888/services/files/download/filename",
-				"method": "GET",
-				"header": [],
-				"body": {},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Upload File",
-			"request": {
-				"url": "http://localhost:8888/services/files/upload/targetdirectory",
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "file",
-							"value": "",
-							"description": "",
-							"type": "file"
-						}
-					]
+				{
+					"name": "Get anonymous role id",
+					"request": {
+						"url": "http://localhost:8888/services/admin/users/role/anonymous",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
 				},
-				"description": ""
-			},
-			"response": []
+				{
+					"name": "Add new user",
+					"request": {
+						"url": "http://localhost:8888/services/admin/users/add",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"newuser\",\n\t\"password\": \"secret1\",\n\t\"roles\": [ \"public\", \"static\" ]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user",
+					"request": {
+						"url": "http://localhost:8888/services/admin/users/remove/newuser",
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"name": "Get file storage info",
-			"request": {
-				"url": "http://localhost:8888/services/admin/storageinfo",
-				"method": "GET",
-				"header": [],
-				"body": {},
-				"description": ""
-			},
-			"response": []
+			"name": "admin-fileaccessfilters",
+			"description": "",
+			"item": [
+				{
+					"name": "Get file access filters",
+					"request": {
+						"url": "http://localhost:8888/services/admin/file/access/filters",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Add filter",
+					"request": {
+						"url": "http://localhost:8888/services/admin/file/access/filters",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"path\": \"somedir/subdir/*\",\n\t\"access\": \"READ_WRITE\",\n\t\"roles\": [ \"public\", \"static\" ]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete filter",
+					"request": {
+						"url": "http://localhost:8888/services/admin/file/access/filters",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"path\": \"somedir/subdir/*\",\n\t\"access\": \"READ_WRITE\",\n\t\"roles\": [ \"public\", \"static\" ]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "admin",
+			"description": "",
+			"item": [
+				{
+					"name": "Get file storage info",
+					"request": {
+						"url": "http://localhost:8888/services/admin/storage/info",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get all active sessions",
+					"request": {
+						"url": "http://localhost:8888/services/admin/sessions",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Terminate session",
+					"request": {
+						"url": "http://localhost:8888/services/admin/sessions/D7BCC48C1CDC6CBD2620D6FE2D356C2D",
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "access",
+			"description": "",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"url": "http://localhost:8888/services/auth/login/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"userName\": \"master\",\n\t\"password\": \"secret\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"url": "http://localhost:8888/services/auth/logout/",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "files",
+			"description": "",
+			"item": [
+				{
+					"name": "Get files and directories in base path",
+					"request": {
+						"url": "http://localhost:8888/services/files/list/",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Move file or directory",
+					"request": {
+						"url": "http://localhost:8888/services/files/move/source",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"destinationPath\": \"destination\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete file or directory",
+					"request": {
+						"url": "http://localhost:8888/services/files/delete/somefileordirectory",
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Create empty directory",
+					"request": {
+						"url": "http://localhost:8888/services/files/createdir/directoryname",
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Download file ",
+					"request": {
+						"url": "http://localhost:8888/services/files/download/filename",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Upload File",
+					"request": {
+						"url": "http://localhost:8888/services/files/upload/targetdirectory",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"value": "",
+									"description": "",
+									"type": "file"
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

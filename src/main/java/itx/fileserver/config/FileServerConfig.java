@@ -1,6 +1,6 @@
 package itx.fileserver.config;
 
-import itx.fileserver.config.dto.FilterConfig;
+import itx.fileserver.services.dto.FilterConfig;
 import itx.fileserver.config.dto.UserConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -25,6 +25,9 @@ public class FileServerConfig {
 
     @Value("${fileserver.admin.role}")
     private String adminRole;
+
+    @Value("${fileserver.data.storage}")
+    private String dataStorage;
 
     private List<UserConfig> users;
 
@@ -76,5 +79,13 @@ public class FileServerConfig {
 
     public void setAdminRole(String adminRole) {
         this.adminRole = adminRole;
+    }
+
+    public String getDataStorage() {
+        return dataStorage;
+    }
+
+    public void setDataStorage(String dataStorage) {
+        this.dataStorage = dataStorage;
     }
 }

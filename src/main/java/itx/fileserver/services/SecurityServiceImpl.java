@@ -1,6 +1,6 @@
 package itx.fileserver.services;
 
-import itx.fileserver.config.FileServerConfig;
+import itx.fileserver.services.data.UserManagerService;
 import itx.fileserver.services.dto.RoleId;
 import itx.fileserver.services.dto.SessionId;
 import itx.fileserver.services.dto.SessionInfo;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,34 +24,20 @@ public class SecurityServiceImpl implements SecurityService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SecurityServiceImpl.class);
 
-    private final Map<UserId, UserData> users;
+    private final UserManagerService userService;
     private final Map<SessionId, UserData> authorizedSessions;
     private final Map<SessionId, UserData> anonymousSessions;
-    private final RoleId anonymousRole;
-    private final RoleId adminRole;
 
     @Autowired
-    public SecurityServiceImpl(FileServerConfig fileServerConfig) {
-        this.users = new ConcurrentHashMap<>();
+    public SecurityServiceImpl(UserManagerService userService) {
+        this.userService = userService;
         this.authorizedSessions = new ConcurrentHashMap<>();
         this.anonymousSessions = new ConcurrentHashMap<>();
-        this.anonymousRole = new RoleId(fileServerConfig.getAnonymousRole());
-        this.adminRole = new RoleId(fileServerConfig.getAdminRole());
-
-        fileServerConfig.getUsers().forEach(uc->{
-            Set<RoleId> roles = new HashSet<>();
-            uc.getRoles().forEach(r-> {
-                roles.add(new RoleId(r));
-            });
-            UserData userData = new UserData(new UserId(uc.getUsername()), roles, uc.getPassword());
-            LOG.info("User: {}", uc.getUsername());
-            users.put(userData.getId(), userData);
-        });
     }
 
     @Override
     public UserData createAnonymousSession(SessionId sessionId) {
-        UserData userData = new UserData(new UserId(sessionId.getId()), anonymousRole, "");
+        UserData userData = new UserData(new UserId(sessionId.getId()), userService.getAnonymousRole(), "");
         anonymousSessions.put(sessionId, userData);
         return userData;
     }
@@ -71,7 +56,7 @@ public class SecurityServiceImpl implements SecurityService {
     public boolean isAuthorizedAdmin(SessionId sessionId) {
         UserData userData = authorizedSessions.get(sessionId);
         if (userData != null) {
-            return userData.getRoles().contains(adminRole);
+            return userData.getRoles().contains(userService.getAdminRole());
         }
         return false;
     }
@@ -79,11 +64,11 @@ public class SecurityServiceImpl implements SecurityService {
     @Override
     public Optional<UserData> authorize(SessionId sessionId, String username, String password) {
         UserId userId = new UserId(username);
-        UserData userData = users.get(userId);
-        if (userData != null && userData.verifyPassword(password)) {
-            authorizedSessions.put(sessionId, userData);
+        Optional<UserData> userData = userService.getUser(userId);
+        if (userData.isPresent() && userData.get().verifyPassword(password)) {
+            authorizedSessions.put(sessionId, userData.get());
             anonymousSessions.remove(sessionId);
-            return Optional.of(userData);
+            return userData;
         }
         return Optional.empty();
     }
@@ -117,7 +102,7 @@ public class SecurityServiceImpl implements SecurityService {
             anonymous.add(new SessionInfo(id, user.getId(), user.getRoles()));
         });
         authorizedSessions.forEach((id,user)->{
-            if (user.getRoles().contains(adminRole)) {
+            if (user.getRoles().contains(userService.getAdminRole())) {
                 admins.add(new SessionInfo(id, user.getId(), user.getRoles()));
             } else {
                 users.add(new SessionInfo(id, user.getId(), user.getRoles()));

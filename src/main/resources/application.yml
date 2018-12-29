@@ -12,6 +12,12 @@ server:
 
 fileserver:
    home: /home/juraj/Downloads
+   data:
+     storage: inmemory
+   anonymous:        #setting for anonymous users
+     role: anonymous #role of anonymous users
+   admin:            #setting for admin users
+     role: master    #role of admin users
    users:
      - username: master
        password: secret
@@ -36,10 +42,6 @@ fileserver:
          - joe
          - public
          - anonymous
-   anonymous:        #setting for anonymous users
-     role: anonymous #role of anonymous users
-   admin:            #setting for admin users
-     role: master    #role of admin users
    filters:
      - path: '*'
        access: READ_WRITE

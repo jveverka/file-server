@@ -23,13 +23,12 @@ user access control and security.
 * Privileged admin role for server setup and monitoring
 * Transport protocols: http or https
 * Single jar distribution (~16MB).  
+* Admin APIs for monitoring and management access and users/roles
 
 ## Planned features
 * web UI / web client for REST APIs
-* admin UI for user access management (users and roles)
 * compressed directory download
 * compressed directory upload
-* dynamic user access management (local database required)
 
 ## Requirements for developers
 * [JDK 11](https://jdk.java.net/11/) or later (JDK 8 is supported as well)
@@ -85,13 +84,15 @@ Selected role may be used for admin access. Admin users have access to special d
 See this [example](src/main/resources/application.yml) of server configuration.
 
 #### Get volume info
-* __GET__ http://localhost:8888/services/admin/storageinfo - get info about storage (storage base path, free space and total space)  
-  ``curl -X GET http://localhost:8888/services/admin/storageinfo -b /tmp/cookies.txt``
+* __GET__ http://localhost:8888/services/admin/storage/info - get info about storage (storage base path, free space and total space)  
+  ``curl -X GET http://localhost:8888/services/admin/storage/info -b /tmp/cookies.txt``
 
 #### Get active sessions
 * __GET__ http://localhost:8888/services/admin/sessions - get list of active user sessions  
   ``curl -X GET http://localhost:8888/services/admin/sessions -b /tmp/cookies.txt``
 
+#### Other admin REST APIs
+See [attached postman collection](docs/FileServer.postman_collection.json) for all admin APIs.
 
 ### Build and Run
 Variable ``file.server.home`` in ``application.yml`` file defines *base directory* to be exposed via REST APIs.

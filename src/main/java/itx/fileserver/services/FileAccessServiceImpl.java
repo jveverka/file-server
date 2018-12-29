@@ -1,6 +1,6 @@
 package itx.fileserver.services;
 
-import itx.fileserver.config.FileServerConfig;
+import itx.fileserver.services.data.FileAccessManagerService;
 import itx.fileserver.services.dto.AccessType;
 import itx.fileserver.services.dto.FileAccessFilter;
 import itx.fileserver.services.dto.RoleId;
@@ -10,11 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -22,24 +19,11 @@ public class FileAccessServiceImpl implements FileAccessService {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileAccessServiceImpl.class);
 
-    private final Map<RoleId, List<FileAccessFilter>> filters;
+    private final FileAccessManagerService fileAccessManagerService;
 
     @Autowired
-    public FileAccessServiceImpl(FileServerConfig fileServerConfig) {
-        this.filters = new HashMap<>();
-        fileServerConfig.getFilters().forEach(f -> {
-            FileAccessFilter fileAccessFilter = new FileAccessFilter(f.getPath(), AccessType.valueOf(f.getAccess()));
-            f.getRoles().forEach(r -> {
-                RoleId roleId = new RoleId(r);
-                List<FileAccessFilter> fileAccessFilters = filters.get(roleId);
-                if (fileAccessFilters == null) {
-                    fileAccessFilters = new ArrayList<>();
-                    filters.put(roleId, fileAccessFilters);
-                }
-                LOG.info("Filter: role={} path={} {}", roleId.getId(), fileAccessFilter.getPath(), fileAccessFilter.getAccessType());
-                fileAccessFilters.add(fileAccessFilter);
-            });
-        });
+    public FileAccessServiceImpl(FileAccessManagerService fileAccessManagerService) {
+        this.fileAccessManagerService = fileAccessManagerService;
     }
 
     @Override
@@ -68,7 +52,7 @@ public class FileAccessServiceImpl implements FileAccessService {
 
     private Set<AccessType> getAccessTypes(RoleId role, Path path, AccessType expectedAccessType) {
         Set<AccessType> result = new HashSet<>();
-        List<FileAccessFilter> fileAccessFilters = filters.get(role);
+        Collection<FileAccessFilter> fileAccessFilters = fileAccessManagerService.getFilters(role);
         String strPath = path.toString();
         if (fileAccessFilters != null) {
             for (FileAccessFilter filter: fileAccessFilters) {

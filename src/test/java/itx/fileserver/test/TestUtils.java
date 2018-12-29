@@ -1,7 +1,7 @@
 package itx.fileserver.test;
 
 import itx.fileserver.config.FileServerConfig;
-import itx.fileserver.config.dto.FilterConfig;
+import itx.fileserver.services.dto.FilterConfig;
 import itx.fileserver.config.dto.UserConfig;
 
 import java.util.ArrayList;

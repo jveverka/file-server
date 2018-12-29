@@ -1,7 +1,8 @@
-package itx.fileserver.config.dto;
+package itx.fileserver.services.dto;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class FilterConfig {
 
@@ -40,5 +41,20 @@ public class FilterConfig {
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FilterConfig that = (FilterConfig) o;
+        return Objects.equals(path, that.path) &&
+                Objects.equals(access, that.access) &&
+                Objects.equals(roles, that.roles);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(path, access, roles);
     }
 }
