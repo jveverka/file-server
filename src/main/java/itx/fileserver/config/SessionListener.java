@@ -20,19 +20,21 @@ public class SessionListener implements HttpSessionListener, HttpSessionIdListen
     private static final Logger LOG = LoggerFactory.getLogger(SessionListener.class);
 
     private final SecurityService securityService;
+    private final FileServerConfig fileServerConfig;
 
     @Autowired
-    public SessionListener(SecurityService securityService) {
+    public SessionListener(SecurityService securityService, FileServerConfig fileServerConfig) {
         this.securityService = securityService;
+        this.fileServerConfig = fileServerConfig;
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        LOG.info("setApplicationContext: ");
+        LOG.info("setApplicationContext: httpSessionTimeout={}", fileServerConfig.getSessionTimeout());
         if (applicationContext instanceof WebApplicationContext) {
             WebApplicationContext webApplicationContext = (WebApplicationContext) applicationContext;
             webApplicationContext.getServletContext().addListener(this);
-            webApplicationContext.getServletContext().setSessionTimeout(2);
+            webApplicationContext.getServletContext().setSessionTimeout(fileServerConfig.getSessionTimeout());
         } else {
             LOG.warn("ERROR: Must be inside a web application context !");
         }

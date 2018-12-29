@@ -17,6 +17,9 @@ public class FileServerConfig {
     @Value("${fileserver.home}")
     private String home;
 
+    @Value("${server.session.timeout}")
+    private int sessionTimeout;
+
     private List<UserConfig> users;
 
     private List<FilterConfig> filters;
@@ -39,6 +42,10 @@ public class FileServerConfig {
 
     public void setFilters(List<FilterConfig> filters) {
         this.filters = filters;
+    }
+
+    public int getSessionTimeout() {
+        return sessionTimeout;
     }
 
 }
