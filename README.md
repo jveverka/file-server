@@ -18,7 +18,8 @@ user access control and security.
   - delete file or directory
   - move file or directory
 * Uses Role based access control 
-* Supports multi-tenancy (many users and roles) 
+* Supports multi-tenancy (many users and roles)
+* Access for anonymous users (user not logged in) 
 * Transport protocols: http or https
 * Single jar distribution (~16MB).  
 

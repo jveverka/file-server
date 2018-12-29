@@ -63,7 +63,12 @@ public class FileServerController {
     @GetMapping("/storageinfo")
     public ResponseEntity<FileStorageInfo> getStorageInfo() {
         LOG.info("getStorageInfo:");
-        return ResponseEntity.ok().body(fileService.getFileStorageInfo());
+        String sessionId = httpServletRequest.getSession().getId();
+        if (securityService.isAuthorized(sessionId).isPresent()) {
+            return ResponseEntity.ok().body(fileService.getFileStorageInfo());
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
 
     @GetMapping(DOWNLOAD_PREFIX + "**")

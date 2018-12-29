@@ -1,5 +1,6 @@
 package itx.fileserver.services.dto;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class UserData {
@@ -11,6 +12,13 @@ public class UserData {
     public UserData(UserId id, Set<RoleId> roles, String password) {
         this.id = id;
         this.roles = roles;
+        this.password = password;
+    }
+
+    public UserData(UserId id, RoleId role, String password) {
+        this.id = id;
+        this.roles = new HashSet<>();
+        this.roles.add(role);
         this.password = password;
     }
 

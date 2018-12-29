@@ -2,7 +2,7 @@
 server:
   port: 8888
   session:
-    timeout: 3 #http session timeout in minutes
+    timeout: 10 #http session timeout in minutes
 #  port: 8443
 #  ssl:
 #    key-store: classpath:keystore.jks
@@ -18,20 +18,26 @@ fileserver:
        roles:
          - master
          - public
+         - anonymous
      - username: public
        password: secret
        roles:
          - public
+         - anonymous
      - username: jane
        password: secret
        roles:
-         - public
          - jane
+         - public
+         - anonymous
      - username: joe
        password: secret
        roles:
-         - public
          - joe
+         - public
+         - anonymous
+   anonymous:        #setting for anonymous users
+     role: anonymous #role of anonymous users
    filters:
      - path: '*'
        access: READ_WRITE
@@ -62,3 +68,11 @@ fileserver:
        access: READ_WRITE
        roles:
          - joe
+     - path: 'anonymous-read/*'
+       access: READ
+       roles:
+         - anonymous
+     - path: 'anonymous-readwrite/*'
+       access: READ_WRITE
+       roles:
+         - anonymous

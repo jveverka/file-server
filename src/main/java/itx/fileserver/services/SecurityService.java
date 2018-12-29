@@ -12,6 +12,13 @@ import java.util.Set;
 public interface SecurityService {
 
     /**
+     * Create anonymous session
+     * @param sessionId unique session id.
+     * @return {@link UserData} for anonymous session.
+     */
+    UserData createAnonymousSession(String sessionId);
+
+    /**
      * Verify is session is authorized.
      * @param sessionId unique session id.
      * @return {@link UserData} if session is authorized, empty if not.

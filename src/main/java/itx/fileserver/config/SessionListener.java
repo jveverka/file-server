@@ -43,6 +43,7 @@ public class SessionListener implements HttpSessionListener, HttpSessionIdListen
     @Override
     public void sessionCreated(HttpSessionEvent se) {
         LOG.info("sessionCreated: {}", se.getSession().getId());
+        securityService.createAnonymousSession(se.getSession().getId());
     }
 
     @Override

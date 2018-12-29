@@ -20,6 +20,9 @@ public class FileServerConfig {
     @Value("${server.session.timeout}")
     private int sessionTimeout;
 
+    @Value("${fileserver.anonymous.role}")
+    private String anonymousRole;
+
     private List<UserConfig> users;
 
     private List<FilterConfig> filters;
@@ -48,4 +51,7 @@ public class FileServerConfig {
         return sessionTimeout;
     }
 
+    public String getAnonymousRole() {
+        return anonymousRole;
+    }
 }

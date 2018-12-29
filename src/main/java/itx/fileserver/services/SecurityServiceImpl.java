@@ -21,11 +21,16 @@ public class SecurityServiceImpl implements SecurityService {
     private static final Logger LOG = LoggerFactory.getLogger(SecurityServiceImpl.class);
 
     private final Map<UserId, UserData> users;
-    private final Map<String, UserData> sessions;
+    private final Map<String, UserData> authorizedSessions;
+    private final Map<String, UserData> anonymousSessions;
+    private final RoleId anonymousRole;
 
     @Autowired
     public SecurityServiceImpl(FileServerConfig fileServerConfig) {
         this.users = new ConcurrentHashMap<>();
+        this.authorizedSessions = new ConcurrentHashMap<>();
+        this.anonymousSessions = new ConcurrentHashMap<>();
+        this.anonymousRole = new RoleId(fileServerConfig.getAnonymousRole());
 
         fileServerConfig.getUsers().forEach(uc->{
             Set<RoleId> roles = new HashSet<>();
@@ -36,12 +41,18 @@ public class SecurityServiceImpl implements SecurityService {
             LOG.info("User: {}", uc.getUsername());
             users.put(userData.getId(), userData);
         });
-        this.sessions = new ConcurrentHashMap<>();
+    }
+
+    @Override
+    public UserData createAnonymousSession(String sessionId) {
+        UserData userData = new UserData(new UserId(sessionId), anonymousRole, "");
+        anonymousSessions.put(sessionId, userData);
+        return userData;
     }
 
     @Override
     public Optional<UserData> isAuthorized(String sessionId) {
-        return Optional.ofNullable(sessions.get(sessionId));
+        return Optional.ofNullable(authorizedSessions.get(sessionId));
     }
 
     @Override
@@ -49,7 +60,8 @@ public class SecurityServiceImpl implements SecurityService {
         UserId userId = new UserId(username);
         UserData userData = users.get(userId);
         if (userData != null && userData.verifyPassword(password)) {
-            sessions.put(sessionId, userData);
+            authorizedSessions.put(sessionId, userData);
+            anonymousSessions.remove(sessionId);
             return Optional.of(userData);
         }
         return Optional.empty();
@@ -57,14 +69,20 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public void terminateSession(String sessionId) {
-        sessions.remove(sessionId);
+        authorizedSessions.remove(sessionId);
+        anonymousSessions.remove(sessionId);
     }
 
     @Override
     public Optional<Set<RoleId>> getRoles(String sessionId) {
-        UserData userData = sessions.get(sessionId);
+        UserData userData = authorizedSessions.get(sessionId);
         if (userData != null) {
             return Optional.of(userData.getRoles());
+        } else {
+            userData = anonymousSessions.get(sessionId);
+            if (userData != null) {
+                return Optional.of(userData.getRoles());
+            }
         }
         return Optional.empty();
     }
