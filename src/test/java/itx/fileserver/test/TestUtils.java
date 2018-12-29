@@ -21,6 +21,8 @@ public final class TestUtils {
         users.add(new UserConfig("public", "secret", "public"));
         FileServerConfig fileServerConfig = new FileServerConfig();
         fileServerConfig.setUsers(users);
+        fileServerConfig.setAdminRole("master");
+        fileServerConfig.setAnonymousRole("anonymous");
         return fileServerConfig;
     }
 

@@ -1,6 +1,7 @@
 package itx.fileserver.services;
 
 import itx.fileserver.services.dto.RoleId;
+import itx.fileserver.services.dto.SessionId;
 import itx.fileserver.services.dto.UserData;
 
 import java.util.Optional;
@@ -16,14 +17,28 @@ public interface SecurityService {
      * @param sessionId unique session id.
      * @return {@link UserData} for anonymous session.
      */
-    UserData createAnonymousSession(String sessionId);
+    UserData createAnonymousSession(SessionId sessionId);
 
     /**
      * Verify is session is authorized.
      * @param sessionId unique session id.
      * @return {@link UserData} if session is authorized, empty if not.
      */
-    Optional<UserData> isAuthorized(String sessionId);
+    Optional<UserData> isAuthorized(SessionId sessionId);
+
+    /**
+     * Verify is session is anonymous.
+     * @param sessionId unique session id.
+     * @return {@link UserData} if session is anonymous, empty if not.
+     */
+    Optional<UserData> isAnonymous(SessionId sessionId);
+
+    /**
+     * Verify is session is authorized and has admin role.
+     * @param sessionId unique session id.
+     * @return true if session is authorized admin user, false if not.
+     */
+    boolean isAuthorizedAdmin(SessionId sessionId);
 
     /**
      * Authorize user session.
@@ -32,19 +47,19 @@ public interface SecurityService {
      * @param password password for the user's identity.
      * @return {@link UserData} if session is authorized, empty if not.
      */
-    Optional<UserData> authorize(String sessionId, String username, String password);
+    Optional<UserData> authorize(SessionId sessionId, String username, String password);
 
     /**
      * Terminate existing session.
      * @param sessionId unique session id.
      */
-    void terminateSession(String sessionId);
+    void terminateSession(SessionId sessionId);
 
     /**
      * Get roles for existing session.
      * @param sessionId unique session id.
      * @return set of user's roles for the session or empty if session does not exist.
      */
-    Optional<Set<RoleId>> getRoles(String sessionId);
+    Optional<Set<RoleId>> getRoles(SessionId sessionId);
 
 }

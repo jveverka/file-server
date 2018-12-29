@@ -1,6 +1,7 @@
 package itx.fileserver.config;
 
 import itx.fileserver.services.SecurityService;
+import itx.fileserver.services.dto.SessionId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -43,13 +44,13 @@ public class SessionListener implements HttpSessionListener, HttpSessionIdListen
     @Override
     public void sessionCreated(HttpSessionEvent se) {
         LOG.info("sessionCreated: {}", se.getSession().getId());
-        securityService.createAnonymousSession(se.getSession().getId());
+        securityService.createAnonymousSession(new SessionId(se.getSession().getId()));
     }
 
     @Override
     public void sessionDestroyed(HttpSessionEvent se) {
         LOG.info("sessionDestroyed: {}", se.getSession().getId());
-        securityService.terminateSession(se.getSession().getId());
+        securityService.terminateSession(new SessionId(se.getSession().getId()));
     }
 
     @Override

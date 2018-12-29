@@ -20,6 +20,7 @@ user access control and security.
 * Uses Role based access control 
 * Supports multi-tenancy (many users and roles)
 * Access for anonymous users (user not logged in) 
+* Privileged admin role for server setup and monitoring
 * Transport protocols: http or https
 * Single jar distribution (~16MB).  
 
@@ -41,10 +42,6 @@ user access control and security.
 ### Rest Endpoints
 All REST endpoints use 'dynamic' path. This means that path ``**`` is used as relative path in *base directory*.
 See also [postman collection example](docs/FileServer.postman_collection.json).
-
-#### Get volume info
-* __GET__ http://localhost:8888/services/files/storageinfo - get info about storage (storage base path, free space and total space)  
-  ``curl -X GET http://localhost:8888/services/files/storageinfo -b /tmp/cookies.txt``
 
 #### Get list of files  
 * __GET__ http://localhost:8888/services/files/list/** - list content directory or subdirectory  
@@ -82,6 +79,14 @@ See this [example](src/main/resources/application.yml) of server configuration.
 #### logout
 * __GET__ http://localhost:8888/services/auth/logout  
   ``curl -X GET http://localhost:8888/services/auth/logout -b /tmp/cookies.txt``
+
+### Admin access
+Selected role may be used for admin access. Admin users have access to special dedicated REST endpoints.
+See this [example](src/main/resources/application.yml) of server configuration.
+
+#### Get volume info
+* __GET__ http://localhost:8888/services/admin/storageinfo - get info about storage (storage base path, free space and total space)  
+  ``curl -X GET http://localhost:8888/services/admin/storageinfo -b /tmp/cookies.txt``
 
 ### Build and Run
 Variable ``file.server.home`` in ``application.yml`` file defines *base directory* to be exposed via REST APIs.

@@ -2,6 +2,7 @@ package itx.fileserver.services;
 
 import itx.fileserver.config.FileServerConfig;
 import itx.fileserver.services.dto.RoleId;
+import itx.fileserver.services.dto.SessionId;
 import itx.fileserver.services.dto.UserData;
 import itx.fileserver.services.dto.UserId;
 import org.slf4j.Logger;
@@ -21,9 +22,10 @@ public class SecurityServiceImpl implements SecurityService {
     private static final Logger LOG = LoggerFactory.getLogger(SecurityServiceImpl.class);
 
     private final Map<UserId, UserData> users;
-    private final Map<String, UserData> authorizedSessions;
-    private final Map<String, UserData> anonymousSessions;
+    private final Map<SessionId, UserData> authorizedSessions;
+    private final Map<SessionId, UserData> anonymousSessions;
     private final RoleId anonymousRole;
+    private final RoleId adminRole;
 
     @Autowired
     public SecurityServiceImpl(FileServerConfig fileServerConfig) {
@@ -31,6 +33,7 @@ public class SecurityServiceImpl implements SecurityService {
         this.authorizedSessions = new ConcurrentHashMap<>();
         this.anonymousSessions = new ConcurrentHashMap<>();
         this.anonymousRole = new RoleId(fileServerConfig.getAnonymousRole());
+        this.adminRole = new RoleId(fileServerConfig.getAdminRole());
 
         fileServerConfig.getUsers().forEach(uc->{
             Set<RoleId> roles = new HashSet<>();
@@ -44,19 +47,33 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public UserData createAnonymousSession(String sessionId) {
-        UserData userData = new UserData(new UserId(sessionId), anonymousRole, "");
+    public UserData createAnonymousSession(SessionId sessionId) {
+        UserData userData = new UserData(new UserId(sessionId.getId()), anonymousRole, "");
         anonymousSessions.put(sessionId, userData);
         return userData;
     }
 
     @Override
-    public Optional<UserData> isAuthorized(String sessionId) {
+    public Optional<UserData> isAuthorized(SessionId sessionId) {
         return Optional.ofNullable(authorizedSessions.get(sessionId));
     }
 
     @Override
-    public Optional<UserData> authorize(String sessionId, String username, String password) {
+    public Optional<UserData> isAnonymous(SessionId sessionId) {
+        return Optional.ofNullable(anonymousSessions.get(sessionId));
+    }
+
+    @Override
+    public boolean isAuthorizedAdmin(SessionId sessionId) {
+        UserData userData = authorizedSessions.get(sessionId);
+        if (userData != null) {
+            return userData.getRoles().contains(adminRole);
+        }
+        return false;
+    }
+
+    @Override
+    public Optional<UserData> authorize(SessionId sessionId, String username, String password) {
         UserId userId = new UserId(username);
         UserData userData = users.get(userId);
         if (userData != null && userData.verifyPassword(password)) {
@@ -68,13 +85,13 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public void terminateSession(String sessionId) {
+    public void terminateSession(SessionId sessionId) {
         authorizedSessions.remove(sessionId);
         anonymousSessions.remove(sessionId);
     }
 
     @Override
-    public Optional<Set<RoleId>> getRoles(String sessionId) {
+    public Optional<Set<RoleId>> getRoles(SessionId sessionId) {
         UserData userData = authorizedSessions.get(sessionId);
         if (userData != null) {
             return Optional.of(userData.getRoles());

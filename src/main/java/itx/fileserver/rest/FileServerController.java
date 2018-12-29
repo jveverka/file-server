@@ -8,6 +8,7 @@ import itx.fileserver.services.SecurityService;
 import itx.fileserver.services.dto.FileList;
 import itx.fileserver.services.dto.FileStorageInfo;
 import itx.fileserver.services.dto.RoleId;
+import itx.fileserver.services.dto.SessionId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,22 +61,11 @@ public class FileServerController {
         this.securityService = securityService;
     }
 
-    @GetMapping("/storageinfo")
-    public ResponseEntity<FileStorageInfo> getStorageInfo() {
-        LOG.info("getStorageInfo:");
-        String sessionId = httpServletRequest.getSession().getId();
-        if (securityService.isAuthorized(sessionId).isPresent()) {
-            return ResponseEntity.ok().body(fileService.getFileStorageInfo());
-        } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-    }
-
     @GetMapping(DOWNLOAD_PREFIX + "**")
     public ResponseEntity<Resource> downloadFile() {
         try {
             String contextPath = httpServletRequest.getRequestURI();
-            String sessionId = httpServletRequest.getSession().getId();
+            SessionId sessionId = new SessionId(httpServletRequest.getSession().getId());
             Optional<Set<RoleId>> roles = securityService.getRoles(sessionId);
             if (roles.isPresent()) {
                 Path filePath = Paths.get(contextPath.substring((URI_PREFIX + DOWNLOAD_PREFIX).length()));
@@ -99,7 +89,7 @@ public class FileServerController {
     public ResponseEntity<FileList> getFiles() {
         try {
             String contextPath = httpServletRequest.getRequestURI();
-            String sessionId = httpServletRequest.getSession().getId();
+            SessionId sessionId = new SessionId(httpServletRequest.getSession().getId());
             Optional<Set<RoleId>> roles = securityService.getRoles(sessionId);
             if (roles.isPresent()) {
                 Path filePath = Paths.get(contextPath.substring((URI_PREFIX + LIST_PREFIX).length()));
@@ -119,7 +109,7 @@ public class FileServerController {
     public ResponseEntity<Resource> fileUpload(@RequestParam("file") MultipartFile file) {
         try {
             String contextPath = httpServletRequest.getRequestURI();
-            String sessionId = httpServletRequest.getSession().getId();
+            SessionId sessionId = new SessionId(httpServletRequest.getSession().getId());
             Optional<Set<RoleId>> roles = securityService.getRoles(sessionId);
             if (roles.isPresent()) {
                 Path filePath = Paths.get(contextPath.substring((URI_PREFIX + UPLOAD_PREFIX).length()));
@@ -139,7 +129,7 @@ public class FileServerController {
     public ResponseEntity<Resource> delete() {
         try {
             String contextPath = httpServletRequest.getRequestURI();
-            String sessionId = httpServletRequest.getSession().getId();
+            SessionId sessionId = new SessionId(httpServletRequest.getSession().getId());
             Optional<Set<RoleId>> roles = securityService.getRoles(sessionId);
             if (roles.isPresent()) {
                 Path filePath = Paths.get(contextPath.substring((URI_PREFIX + DELETE_PREFIX).length()));
@@ -159,7 +149,7 @@ public class FileServerController {
     public ResponseEntity<Resource> createDirectory() {
         try {
             String contextPath = httpServletRequest.getRequestURI();
-            String sessionId = httpServletRequest.getSession().getId();
+            SessionId sessionId = new SessionId(httpServletRequest.getSession().getId());
             Optional<Set<RoleId>> roles = securityService.getRoles(sessionId);
             if (roles.isPresent()) {
                 Path filePath = Paths.get(contextPath.substring((URI_PREFIX + CREATEDIR_PREFIX).length()));
@@ -179,7 +169,7 @@ public class FileServerController {
     public ResponseEntity<Resource> move(@RequestBody MoveRequest moveRequest) {
         try {
             String contextPath = httpServletRequest.getRequestURI();
-            String sessionId = httpServletRequest.getSession().getId();
+            SessionId sessionId = new SessionId(httpServletRequest.getSession().getId());
             Optional<Set<RoleId>> roles = securityService.getRoles(sessionId);
             if (roles.isPresent()) {
                 Path sourcePath = Paths.get(contextPath.substring((URI_PREFIX + MOVE_PREFIX).length()));

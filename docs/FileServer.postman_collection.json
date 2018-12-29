@@ -126,7 +126,7 @@
 		{
 			"name": "Get file storage info",
 			"request": {
-				"url": "http://localhost:8888/services/files/storageinfo",
+				"url": "http://localhost:8888/services/admin/storageinfo",
 				"method": "GET",
 				"header": [],
 				"body": {},

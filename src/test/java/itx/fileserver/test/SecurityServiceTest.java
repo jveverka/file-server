@@ -4,6 +4,7 @@ import itx.fileserver.config.FileServerConfig;
 import itx.fileserver.services.SecurityService;
 import itx.fileserver.services.SecurityServiceImpl;
 import itx.fileserver.services.dto.RoleId;
+import itx.fileserver.services.dto.SessionId;
 import itx.fileserver.services.dto.UserData;
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,9 +14,11 @@ import java.util.Set;
 
 public class SecurityServiceTest {
 
-    private static final String authorizedSession01 = "001";
-    private static final String authorizedSession02 = "002";
-    private static final String notExistingSession  = "notexisting";
+    private static final SessionId authorizedSessionJoe = new SessionId("SessionJoe");
+    private static final SessionId authorizedSessionJane = new SessionId("SessionJane");
+    private static final SessionId authorizedSessionAdmin = new SessionId("SessionAdmin");
+    private static final SessionId anonymousSession = new SessionId("SessionAnonymous");
+    private static final SessionId notExistingSession  = new SessionId("notexisting");
     private static final String validPassword = "secret";
     private static final String invalidPassword = "xxxx";
 
@@ -27,33 +30,33 @@ public class SecurityServiceTest {
         Optional<Set<RoleId>> roles = null;
 
         //login session 1
-        authorized = securityService.authorize(authorizedSession01, "joe", validPassword);
+        authorized = securityService.authorize(authorizedSessionJoe, "joe", validPassword);
         Assert.assertTrue(authorized.isPresent());
         Assert.assertTrue(authorized.get().verifyPassword(validPassword));
-        roles = securityService.getRoles(authorizedSession01);
+        roles = securityService.getRoles(authorizedSessionJoe);
         Assert.assertTrue(roles.isPresent());
-        authorized = securityService.isAuthorized(authorizedSession01);
+        authorized = securityService.isAuthorized(authorizedSessionJoe);
         Assert.assertTrue(authorized.isPresent());
 
         //login session 2
-        authorized = securityService.authorize(authorizedSession02, "jane", validPassword);
+        authorized = securityService.authorize(authorizedSessionJane, "jane", validPassword);
         Assert.assertTrue(authorized.isPresent());
         Assert.assertTrue(authorized.get().verifyPassword(validPassword));
-        roles = securityService.getRoles(authorizedSession02);
+        roles = securityService.getRoles(authorizedSessionJane);
         Assert.assertTrue(roles.isPresent());
-        authorized = securityService.isAuthorized(authorizedSession02);
+        authorized = securityService.isAuthorized(authorizedSessionJane);
         Assert.assertTrue(authorized.isPresent());
 
         //logout both sessions
-        securityService.terminateSession(authorizedSession01);
-        securityService.terminateSession(authorizedSession02);
+        securityService.terminateSession(authorizedSessionJoe);
+        securityService.terminateSession(authorizedSessionJane);
 
         //check session 1 status
-        authorized = securityService.isAuthorized(authorizedSession01);
+        authorized = securityService.isAuthorized(authorizedSessionJoe);
         Assert.assertFalse(authorized.isPresent());
 
         //check session 2 status
-        authorized = securityService.isAuthorized(authorizedSession02);
+        authorized = securityService.isAuthorized(authorizedSessionJane);
         Assert.assertFalse(authorized.isPresent());
     }
 
@@ -77,19 +80,114 @@ public class SecurityServiceTest {
         Optional<UserData> authorized = null;
         Optional<Set<RoleId>> roles = null;
 
-        authorized = securityService.authorize(authorizedSession01, "joe", invalidPassword);
+        authorized = securityService.authorize(authorizedSessionJoe, "joe", invalidPassword);
         Assert.assertFalse(authorized.isPresent());
-        authorized = securityService.isAuthorized(authorizedSession01);
+        authorized = securityService.isAuthorized(authorizedSessionJoe);
         Assert.assertFalse(authorized.isPresent());
-        roles = securityService.getRoles(authorizedSession01);
+        roles = securityService.getRoles(authorizedSessionJoe);
         Assert.assertFalse(roles.isPresent());
 
-        authorized = securityService.authorize(authorizedSession02, "jane", invalidPassword);
+        authorized = securityService.authorize(authorizedSessionJane, "jane", invalidPassword);
         Assert.assertFalse(authorized.isPresent());
-        authorized = securityService.isAuthorized(authorizedSession02);
+        authorized = securityService.isAuthorized(authorizedSessionJane);
         Assert.assertFalse(authorized.isPresent());
-        roles = securityService.getRoles(authorizedSession02);
+        roles = securityService.getRoles(authorizedSessionJane);
         Assert.assertFalse(roles.isPresent());
+    }
+
+    @Test
+    public void testAnonymousSession() {
+        FileServerConfig fileServerConfig = TestUtils.createFileServerConfigForSecurityService();
+        SecurityService securityService = new SecurityServiceImpl(fileServerConfig);
+        Optional<UserData> authorized = null;
+        Optional<Set<RoleId>> roles = null;
+        UserData anonymousUser = null;
+
+        //create anonymous session for valid user and anonymous one
+        anonymousUser = securityService.createAnonymousSession(authorizedSessionJane);
+        Assert.assertNotNull(anonymousUser);
+        anonymousUser = securityService.createAnonymousSession(anonymousSession);
+        Assert.assertNotNull(anonymousUser);
+        Assert.assertTrue(securityService.isAnonymous(authorizedSessionJane).isPresent());
+        Assert.assertTrue(securityService.isAnonymous(anonymousSession).isPresent());
+
+        //login one valid user (not admin)
+        authorized = securityService.authorize(authorizedSessionJane, "jane", validPassword);
+        Assert.assertTrue(authorized.isPresent());
+        Assert.assertTrue(authorized.get().verifyPassword(validPassword));
+
+        //verify if sessions have correct access privileges
+        Assert.assertTrue(securityService.isAuthorized(authorizedSessionJane).isPresent());
+        Assert.assertFalse(securityService.isAuthorized(anonymousSession).isPresent());
+
+        Assert.assertFalse(securityService.isAnonymous(authorizedSessionJane).isPresent());
+        Assert.assertTrue(securityService.isAnonymous(anonymousSession).isPresent());
+
+        Assert.assertFalse(securityService.isAuthorizedAdmin(authorizedSessionJane));
+        Assert.assertFalse(securityService.isAuthorizedAdmin(anonymousSession));
+
+        //terminate both sessions
+        securityService.terminateSession(authorizedSessionJane);
+        securityService.terminateSession(anonymousSession);
+
+        //verify if sessions have correct access privileges after session termination
+        Assert.assertFalse(securityService.isAuthorized(authorizedSessionJane).isPresent());
+        Assert.assertFalse(securityService.isAuthorized(anonymousSession).isPresent());
+
+        Assert.assertFalse(securityService.isAnonymous(authorizedSessionJane).isPresent());
+        Assert.assertFalse(securityService.isAnonymous(anonymousSession).isPresent());
+
+        Assert.assertFalse(securityService.isAuthorizedAdmin(authorizedSessionJane));
+        Assert.assertFalse(securityService.isAuthorizedAdmin(anonymousSession));
+    }
+
+    @Test
+    public void testAdminSession() {
+        FileServerConfig fileServerConfig = TestUtils.createFileServerConfigForSecurityService();
+        SecurityService securityService = new SecurityServiceImpl(fileServerConfig);
+        Optional<UserData> authorized = null;
+        Optional<Set<RoleId>> roles = null;
+        UserData anonymousUser = null;
+
+        //create anonymous session for valid users
+        anonymousUser = securityService.createAnonymousSession(authorizedSessionJane);
+        Assert.assertNotNull(anonymousUser);
+        anonymousUser = securityService.createAnonymousSession(authorizedSessionAdmin);
+        Assert.assertNotNull(anonymousUser);
+        Assert.assertTrue(securityService.isAnonymous(authorizedSessionJane).isPresent());
+        Assert.assertTrue(securityService.isAnonymous(authorizedSessionAdmin).isPresent());
+
+        //login one valid users (one admin, one ordinary user)
+        authorized = securityService.authorize(authorizedSessionJane, "jane", validPassword);
+        Assert.assertTrue(authorized.isPresent());
+        Assert.assertTrue(authorized.get().verifyPassword(validPassword));
+        authorized = securityService.authorize(authorizedSessionAdmin, "master", validPassword);
+        Assert.assertTrue(authorized.isPresent());
+        Assert.assertTrue(authorized.get().verifyPassword(validPassword));
+
+        //verify if sessions have correct access privileges
+        Assert.assertTrue(securityService.isAuthorized(authorizedSessionJane).isPresent());
+        Assert.assertTrue(securityService.isAuthorized(authorizedSessionAdmin).isPresent());
+
+        Assert.assertFalse(securityService.isAnonymous(authorizedSessionJane).isPresent());
+        Assert.assertFalse(securityService.isAnonymous(authorizedSessionAdmin).isPresent());
+
+        Assert.assertFalse(securityService.isAuthorizedAdmin(authorizedSessionJane));
+        Assert.assertTrue(securityService.isAuthorizedAdmin(authorizedSessionAdmin));
+
+        //terminate both sessions
+        securityService.terminateSession(authorizedSessionJane);
+        securityService.terminateSession(authorizedSessionAdmin);
+
+        //verify if sessions have correct access privileges after session termination
+        Assert.assertFalse(securityService.isAuthorized(authorizedSessionJane).isPresent());
+        Assert.assertFalse(securityService.isAuthorized(authorizedSessionAdmin).isPresent());
+
+        Assert.assertFalse(securityService.isAnonymous(authorizedSessionJane).isPresent());
+        Assert.assertFalse(securityService.isAnonymous(authorizedSessionAdmin).isPresent());
+
+        Assert.assertFalse(securityService.isAuthorizedAdmin(authorizedSessionJane));
+        Assert.assertFalse(securityService.isAuthorizedAdmin(authorizedSessionAdmin));
     }
 
 }

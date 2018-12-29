@@ -23,6 +23,9 @@ public class FileServerConfig {
     @Value("${fileserver.anonymous.role}")
     private String anonymousRole;
 
+    @Value("${fileserver.admin.role}")
+    private String adminRole;
+
     private List<UserConfig> users;
 
     private List<FilterConfig> filters;
@@ -53,5 +56,25 @@ public class FileServerConfig {
 
     public String getAnonymousRole() {
         return anonymousRole;
+    }
+
+    public String getAdminRole() {
+        return adminRole;
+    }
+
+    public void setHome(String home) {
+        this.home = home;
+    }
+
+    public void setSessionTimeout(int sessionTimeout) {
+        this.sessionTimeout = sessionTimeout;
+    }
+
+    public void setAnonymousRole(String anonymousRole) {
+        this.anonymousRole = anonymousRole;
+    }
+
+    public void setAdminRole(String adminRole) {
+        this.adminRole = adminRole;
     }
 }

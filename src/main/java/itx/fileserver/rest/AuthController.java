@@ -2,6 +2,7 @@ package itx.fileserver.rest;
 
 import itx.fileserver.services.SecurityService;
 import itx.fileserver.services.dto.LoginRequest;
+import itx.fileserver.services.dto.SessionId;
 import itx.fileserver.services.dto.UserData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<UserData> login(@RequestBody LoginRequest loginRequest) {
         LOG.info("login: {} {}", loginRequest.getUserName(), httpSession.getId());
-        Optional<UserData> userData = securityService.authorize(httpSession.getId(), loginRequest.getUserName(), loginRequest.getPassword());
+        SessionId sessionId = new SessionId(httpSession.getId());
+        Optional<UserData> userData = securityService.authorize(sessionId, loginRequest.getUserName(), loginRequest.getPassword());
         if (userData.isPresent()) {
             return ResponseEntity.ok().body(userData.get());
         } else {
@@ -47,7 +49,8 @@ public class AuthController {
     @GetMapping("/logout")
     public ResponseEntity logout() {
         LOG.info("logout: {}", httpSession.getId());
-        securityService.terminateSession(httpSession.getId());
+        SessionId sessionId = new SessionId(httpSession.getId());
+        securityService.terminateSession(sessionId);
         httpSession.invalidate();
         return ResponseEntity.ok().build();
     }

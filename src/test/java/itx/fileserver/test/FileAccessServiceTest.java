@@ -6,6 +6,7 @@ import itx.fileserver.services.FileAccessServiceImpl;
 import itx.fileserver.services.SecurityService;
 import itx.fileserver.services.SecurityServiceImpl;
 import itx.fileserver.services.dto.RoleId;
+import itx.fileserver.services.dto.SessionId;
 import itx.fileserver.services.dto.UserData;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -23,9 +24,9 @@ import java.util.Set;
 @RunWith(Parameterized.class)
 public class FileAccessServiceTest {
 
-    private static final String authorizedSessionJoe = "SessionJoe";
-    private static final String authorizedSessionJane = "SessionJane";
-    private static final String authorizedSessionPublic = "SessionPublic";
+    private static final SessionId authorizedSessionJoe = new SessionId("SessionJoe");
+    private static final SessionId authorizedSessionJane = new SessionId("SessionJane");
+    private static final SessionId authorizedSessionPublic = new SessionId("SessionPublic");
     private static final String validPassword = "secret";
 
     private static FileAccessService fileAccessService;
@@ -81,12 +82,12 @@ public class FileAccessServiceTest {
         });
     }
 
-    private String sessionId;
+    private SessionId sessionId;
     private String path;
     boolean expectedCanRead;
     private boolean expectedCanReadAndWrite;
 
-    public FileAccessServiceTest(String sessionId, String path, boolean expectedCanRead, boolean expectedCanReadAndWrite) {
+    public FileAccessServiceTest(SessionId sessionId, String path, boolean expectedCanRead, boolean expectedCanReadAndWrite) {
         this.sessionId = sessionId;
         this.path = path;
         this.expectedCanRead = expectedCanRead;
