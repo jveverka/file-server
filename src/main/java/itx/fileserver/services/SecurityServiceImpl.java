@@ -3,6 +3,8 @@ package itx.fileserver.services;
 import itx.fileserver.config.FileServerConfig;
 import itx.fileserver.services.dto.RoleId;
 import itx.fileserver.services.dto.SessionId;
+import itx.fileserver.services.dto.SessionInfo;
+import itx.fileserver.services.dto.Sessions;
 import itx.fileserver.services.dto.UserData;
 import itx.fileserver.services.dto.UserId;
 import org.slf4j.Logger;
@@ -10,7 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -102,6 +106,24 @@ public class SecurityServiceImpl implements SecurityService {
             }
         }
         return Optional.empty();
+    }
+
+    @Override
+    public Sessions getActiveSessions() {
+        List<SessionInfo> anonymous = new ArrayList<>();
+        List<SessionInfo> users = new ArrayList<>();
+        List<SessionInfo> admins = new ArrayList<>();
+        anonymousSessions.forEach((id,user)->{
+            anonymous.add(new SessionInfo(id, user.getId(), user.getRoles()));
+        });
+        authorizedSessions.forEach((id,user)->{
+            if (user.getRoles().contains(adminRole)) {
+                admins.add(new SessionInfo(id, user.getId(), user.getRoles()));
+            } else {
+                users.add(new SessionInfo(id, user.getId(), user.getRoles()));
+            }
+        });
+        return new Sessions(anonymous, users, admins);
     }
 
 }

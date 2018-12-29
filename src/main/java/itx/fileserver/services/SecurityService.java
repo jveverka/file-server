@@ -2,6 +2,7 @@ package itx.fileserver.services;
 
 import itx.fileserver.services.dto.RoleId;
 import itx.fileserver.services.dto.SessionId;
+import itx.fileserver.services.dto.Sessions;
 import itx.fileserver.services.dto.UserData;
 
 import java.util.Optional;
@@ -61,5 +62,11 @@ public interface SecurityService {
      * @return set of user's roles for the session or empty if session does not exist.
      */
     Optional<Set<RoleId>> getRoles(SessionId sessionId);
+
+    /**
+     * Get active sessions currently managed by {@link SecurityService}
+     * @return all active sessions.
+     */
+    Sessions getActiveSessions();
 
 }

@@ -88,6 +88,11 @@ See this [example](src/main/resources/application.yml) of server configuration.
 * __GET__ http://localhost:8888/services/admin/storageinfo - get info about storage (storage base path, free space and total space)  
   ``curl -X GET http://localhost:8888/services/admin/storageinfo -b /tmp/cookies.txt``
 
+#### Get active sessions
+* __GET__ http://localhost:8888/services/admin/sessions - get list of active user sessions  
+  ``curl -X GET http://localhost:8888/services/admin/sessions -b /tmp/cookies.txt``
+
+
 ### Build and Run
 Variable ``file.server.home`` in ``application.yml`` file defines *base directory* to be exposed via REST APIs.
 ```

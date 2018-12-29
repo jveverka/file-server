@@ -5,6 +5,7 @@ import itx.fileserver.services.SecurityService;
 import itx.fileserver.services.SecurityServiceImpl;
 import itx.fileserver.services.dto.RoleId;
 import itx.fileserver.services.dto.SessionId;
+import itx.fileserver.services.dto.Sessions;
 import itx.fileserver.services.dto.UserData;
 import org.junit.Assert;
 import org.junit.Test;
@@ -28,6 +29,12 @@ public class SecurityServiceTest {
         SecurityService securityService = new SecurityServiceImpl(fileServerConfig);
         Optional<UserData> authorized = null;
         Optional<Set<RoleId>> roles = null;
+        Sessions activeSessions = null;
+
+        activeSessions = securityService.getActiveSessions();
+        Assert.assertTrue(activeSessions.getAnonymousSessions().size() == 0);
+        Assert.assertTrue(activeSessions.getUserSessions().size() == 0);
+        Assert.assertTrue(activeSessions.getAdminSessions().size() == 0);
 
         //login session 1
         authorized = securityService.authorize(authorizedSessionJoe, "joe", validPassword);
@@ -47,6 +54,11 @@ public class SecurityServiceTest {
         authorized = securityService.isAuthorized(authorizedSessionJane);
         Assert.assertTrue(authorized.isPresent());
 
+        activeSessions = securityService.getActiveSessions();
+        Assert.assertTrue(activeSessions.getAnonymousSessions().size() == 0);
+        Assert.assertTrue(activeSessions.getUserSessions().size() == 2);
+        Assert.assertTrue(activeSessions.getAdminSessions().size() == 0);
+
         //logout both sessions
         securityService.terminateSession(authorizedSessionJoe);
         securityService.terminateSession(authorizedSessionJane);
@@ -58,6 +70,12 @@ public class SecurityServiceTest {
         //check session 2 status
         authorized = securityService.isAuthorized(authorizedSessionJane);
         Assert.assertFalse(authorized.isPresent());
+
+        activeSessions = securityService.getActiveSessions();
+        Assert.assertTrue(activeSessions.getAnonymousSessions().size() == 0);
+        Assert.assertTrue(activeSessions.getUserSessions().size() == 0);
+        Assert.assertTrue(activeSessions.getAdminSessions().size() == 0);
+
     }
 
     @Test
@@ -66,11 +84,17 @@ public class SecurityServiceTest {
         SecurityService securityService = new SecurityServiceImpl(fileServerConfig);
         Optional<UserData> authorized = null;
         Optional<Set<RoleId>> roles = null;
+        Sessions activeSessions = null;
 
         roles = securityService.getRoles(notExistingSession);
         Assert.assertFalse(roles.isPresent());
         authorized = securityService.isAuthorized(notExistingSession);
         Assert.assertFalse(authorized.isPresent());
+
+        activeSessions = securityService.getActiveSessions();
+        Assert.assertTrue(activeSessions.getAnonymousSessions().size() == 0);
+        Assert.assertTrue(activeSessions.getUserSessions().size() == 0);
+        Assert.assertTrue(activeSessions.getAdminSessions().size() == 0);
     }
 
     @Test
@@ -102,6 +126,7 @@ public class SecurityServiceTest {
         Optional<UserData> authorized = null;
         Optional<Set<RoleId>> roles = null;
         UserData anonymousUser = null;
+        Sessions activeSessions = null;
 
         //create anonymous session for valid user and anonymous one
         anonymousUser = securityService.createAnonymousSession(authorizedSessionJane);
@@ -126,6 +151,11 @@ public class SecurityServiceTest {
         Assert.assertFalse(securityService.isAuthorizedAdmin(authorizedSessionJane));
         Assert.assertFalse(securityService.isAuthorizedAdmin(anonymousSession));
 
+        activeSessions = securityService.getActiveSessions();
+        Assert.assertTrue(activeSessions.getAnonymousSessions().size() == 1);
+        Assert.assertTrue(activeSessions.getUserSessions().size() == 1);
+        Assert.assertTrue(activeSessions.getAdminSessions().size() == 0);
+
         //terminate both sessions
         securityService.terminateSession(authorizedSessionJane);
         securityService.terminateSession(anonymousSession);
@@ -148,6 +178,7 @@ public class SecurityServiceTest {
         Optional<UserData> authorized = null;
         Optional<Set<RoleId>> roles = null;
         UserData anonymousUser = null;
+        Sessions activeSessions = null;
 
         //create anonymous session for valid users
         anonymousUser = securityService.createAnonymousSession(authorizedSessionJane);
@@ -174,6 +205,11 @@ public class SecurityServiceTest {
 
         Assert.assertFalse(securityService.isAuthorizedAdmin(authorizedSessionJane));
         Assert.assertTrue(securityService.isAuthorizedAdmin(authorizedSessionAdmin));
+
+        activeSessions = securityService.getActiveSessions();
+        Assert.assertTrue(activeSessions.getAnonymousSessions().size() == 0);
+        Assert.assertTrue(activeSessions.getUserSessions().size() == 1);
+        Assert.assertTrue(activeSessions.getAdminSessions().size() == 1);
 
         //terminate both sessions
         securityService.terminateSession(authorizedSessionJane);
