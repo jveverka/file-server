@@ -5,6 +5,7 @@ import itx.fileserver.services.FileService;
 import itx.fileserver.services.OperationNotAllowedException;
 import itx.fileserver.services.SecurityService;
 import itx.fileserver.services.dto.FileList;
+import itx.fileserver.services.dto.ResourceAccessInfo;
 import itx.fileserver.services.dto.SessionId;
 import itx.fileserver.services.dto.UserData;
 import org.slf4j.Logger;
@@ -44,6 +45,7 @@ public class FileServerController {
     public static final String DELETE_PREFIX = "/delete/";
     public static final String CREATEDIR_PREFIX = "/createdir/";
     public static final String MOVE_PREFIX = "/move/";
+    public static final String AUDIT_PREFIX = "/audit/";
 
     private final FileService fileService;
     private final SecurityService securityService;
@@ -178,6 +180,24 @@ public class FileServerController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } catch (OperationNotAllowedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+    }
+
+    @GetMapping(AUDIT_PREFIX + "**")
+    public ResponseEntity<ResourceAccessInfo> getAuditInfo() {
+        try {
+            String contextPath = httpServletRequest.getRequestURI();
+            SessionId sessionId = new SessionId(httpServletRequest.getSession().getId());
+            Optional<UserData> userData = securityService.isAuthorized(sessionId);
+            if (userData.isPresent()) {
+                Path sourcePath = Paths.get(contextPath.substring((URI_PREFIX + AUDIT_PREFIX).length()));
+                LOG.info("audit: {}", sourcePath.toString());
+                ResourceAccessInfo resourceAccessInfo = fileService.getResourceAccessInfo(userData.get(), sourcePath);
+                return ResponseEntity.ok().body(resourceAccessInfo);
+            }
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (OperationNotAllowedException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }

@@ -2,11 +2,13 @@ package itx.fileserver.services;
 
 import itx.fileserver.config.FileServerConfig;
 import itx.fileserver.services.data.AuditService;
+import itx.fileserver.services.dto.AuditQuery;
 import itx.fileserver.services.dto.AuditRecord;
 import itx.fileserver.services.dto.DirectoryInfo;
 import itx.fileserver.services.dto.FileInfo;
 import itx.fileserver.services.dto.FileList;
 import itx.fileserver.services.dto.FileStorageInfo;
+import itx.fileserver.services.dto.ResourceAccessInfo;
 import itx.fileserver.services.dto.UserData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.stream.Stream;
 
 import static itx.fileserver.services.dto.AuditConstants.FILE_ACCESS;
@@ -54,6 +57,22 @@ public class FileServiceImpl implements FileService {
     public FileStorageInfo getFileStorageInfo() {
         File home = fileStorageLocation.toFile();
         return new FileStorageInfo(fileStorageLocation, home.getFreeSpace(), home.getTotalSpace());
+    }
+
+    @Override
+    public ResourceAccessInfo getResourceAccessInfo(UserData userData, Path filePath) throws OperationNotAllowedException {
+        LOG.info("getResourceAccessInfo: {}", filePath);
+        verifyReadAccess(userData, filePath);
+        AuditQuery auditQuery = AuditQuery.newBuilder()
+                .withResourcePattern(filePath.toString())
+                .withCategory(FILE_ACCESS.NAME)
+                .build();
+        Collection<AuditRecord> audits = auditService.getAudits(auditQuery);
+        ResourceAccessInfo resourceAccessInfo = new ResourceAccessInfo();
+        audits.forEach(a->{
+            resourceAccessInfo.incrementCounter(a.getAction());
+        });
+        return resourceAccessInfo;
     }
 
     @Override

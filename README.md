@@ -17,6 +17,7 @@ user access control and security.
   - create empty directory
   - delete file or directory
   - move file or directory
+  - get audit data for resource (file or directory) like number of downloads, uploads, ...
 * Uses Role based access control 
 * Supports multi-tenancy (many users and roles)
 * Access for anonymous users (user not logged in) 
@@ -71,6 +72,10 @@ See also [postman collection example](docs/FileServer.postman_collection.json).
 #### Move file or directory
 * __POST__ http://localhost:8888/services/files/move/** - move file or directory. If source is file, destination must be also a file, If source is directory, destination must be directory as well.
   ``curl -X POST http://localhost:8888/services/files/move/path/to/source -b /tmp/cookies.txt -d '{ "destinationPath": "path/to/destination" }''``
+
+#### Get audit data
+* __GET__ http://localhost:8888/services/files/audit/** - get audit data for the resource.
+  ``curl -X POST http://localhost:8888/services/files/audit/path/to/source -b /tmp/cookies.txt``
 
 ### Security
 In order to use file server REST endpoints above, user's http session must be authorized.

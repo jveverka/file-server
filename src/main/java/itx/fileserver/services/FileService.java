@@ -2,6 +2,7 @@ package itx.fileserver.services;
 
 import itx.fileserver.services.dto.FileList;
 import itx.fileserver.services.dto.FileStorageInfo;
+import itx.fileserver.services.dto.ResourceAccessInfo;
 import itx.fileserver.services.dto.UserData;
 import org.springframework.core.io.Resource;
 
@@ -20,6 +21,15 @@ public interface FileService {
      * @return
      */
     FileStorageInfo getFileStorageInfo();
+
+    /**
+     * Get info about resource access.
+     * @param userData users's data accessing this resource.
+     * @param filePath relative path to file or directory.
+     * @return {@link ResourceAccessInfo} access info about this resource.
+     * @throws OperationNotAllowedException
+     */
+    ResourceAccessInfo getResourceAccessInfo(UserData userData, Path filePath) throws OperationNotAllowedException;
 
     /**
      * Create {@link Resource} for given file.

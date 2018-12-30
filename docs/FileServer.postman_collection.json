@@ -318,6 +318,17 @@
 						"description": ""
 					},
 					"response": []
+				},
+				{
+					"name": "Get audit data about resource",
+					"request": {
+						"url": "http://localhost:8888/services/files/audit/joe/leads.json",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
 				}
 			]
 		}
