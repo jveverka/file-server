@@ -104,6 +104,11 @@ Refer to [attached postman collection](docs/FileServer.postman_collection.json) 
   - list all access filters
   - create new access filter
   - remove existing access filter
+* audit data querying showing activities like:
+  - login / logout events
+  - file access events (download, upload, delete, ... all events are recorded)
+  - user management events
+  - file access filter management events  
 
 ### Build and Run
 Variable ``file.server.home`` in ``application.yml`` file defines *base directory* to be exposed via REST APIs.
