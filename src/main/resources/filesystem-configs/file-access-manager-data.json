@@ -1,0 +1,39 @@
+{
+  "filterConfigs": [
+    {
+      "path": "*",
+      "access": "READ_WRITE",
+      "roles": [ "admins" ]
+    },
+    {
+      "path": "admin/*",
+      "access": "READ_WRITE",
+      "roles": [ "admins" ]
+    },
+    {
+      "path": "users/*",
+      "access": "READ_WRITE",
+      "roles": [ "users" ]
+    },
+    {
+      "path": "users/user1/*",
+      "access": "READ_WRITE",
+      "roles": [ "user1" ]
+    },
+    {
+      "path": "users/user2/*",
+      "access": "READ_WRITE",
+      "roles": [ "user2" ]
+    },
+    {
+      "path": "anonymous-read/*",
+      "access": "READ",
+      "roles": [ "anonymous" ]
+    },
+    {
+      "path": "anonymous-write/*",
+      "access": "READ_WRITE",
+      "roles": [ "anonymous" ]
+    }
+  ]
+}

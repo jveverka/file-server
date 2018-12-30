@@ -34,4 +34,8 @@ public class UserData {
         return this.password.equals(password);
     }
 
+    public String password() {
+        return password;
+    }
+
 }

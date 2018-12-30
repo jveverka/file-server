@@ -1,6 +1,5 @@
-package itx.fileserver.services.data.inmemory;
+package itx.fileserver.services.data.base;
 
-import itx.fileserver.config.FileServerConfig;
 import itx.fileserver.services.data.FileAccessManagerService;
 import itx.fileserver.services.dto.AccessType;
 import itx.fileserver.services.dto.FileAccessFilter;
@@ -12,28 +11,17 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class FileAccessManagerServiceImpl implements FileAccessManagerService {
+public abstract class FileAccessManagerServiceImpl implements FileAccessManagerService {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileAccessManagerServiceImpl.class);
 
-    private final Map<RoleId, List<FileAccessFilter>> filters;
-    private final Set<FilterConfig> filterConfigs;
-
-    public FileAccessManagerServiceImpl(FileServerConfig fileServerConfig) {
-        this.filters = new ConcurrentHashMap<>();
-        this.filterConfigs = new HashSet<>();
-        fileServerConfig.getFilters().forEach(f -> {
-            addFilter(f);
-        });
-    }
-
+    protected Map<RoleId, List<FileAccessFilter>> filters;
+    protected Set<FilterConfig> filterConfigs;
 
     @Override
     public void addFilter(FilterConfig filterConfig) {
@@ -49,6 +37,7 @@ public class FileAccessManagerServiceImpl implements FileAccessManagerService {
             LOG.info("Filter: role={} path={} {}", roleId.getId(), fileAccessFilter.getPath(), fileAccessFilter.getAccessType());
             fileAccessFilters.add(fileAccessFilter);
         });
+        persist();
     }
 
     @Override
@@ -82,6 +71,9 @@ public class FileAccessManagerServiceImpl implements FileAccessManagerService {
                 }
             }
         });
+        persist();
     }
+
+    public abstract void persist();
 
 }

@@ -4,7 +4,7 @@ import itx.fileserver.config.FileServerConfig;
 import itx.fileserver.services.SecurityService;
 import itx.fileserver.services.SecurityServiceImpl;
 import itx.fileserver.services.data.UserManagerService;
-import itx.fileserver.services.data.inmemory.UserManagerServiceImpl;
+import itx.fileserver.services.data.inmemory.UserManagerServiceInmemory;
 import itx.fileserver.services.dto.RoleId;
 import itx.fileserver.services.dto.SessionId;
 import itx.fileserver.services.dto.Sessions;
@@ -28,7 +28,7 @@ public class SecurityServiceTest {
     @Test
     public void testValidLoginAndSession() {
         FileServerConfig fileServerConfig = TestUtils.createFileServerConfigForSecurityService();
-        UserManagerService userManagerService = new UserManagerServiceImpl(fileServerConfig);
+        UserManagerService userManagerService = new UserManagerServiceInmemory(fileServerConfig);
         SecurityService securityService = new SecurityServiceImpl(userManagerService);
         Optional<UserData> authorized = null;
         Optional<Set<RoleId>> roles = null;
@@ -84,7 +84,7 @@ public class SecurityServiceTest {
     @Test
     public void testInvalidSession() {
         FileServerConfig fileServerConfig = TestUtils.createFileServerConfigForSecurityService();
-        UserManagerService userManagerService = new UserManagerServiceImpl(fileServerConfig);
+        UserManagerService userManagerService = new UserManagerServiceInmemory(fileServerConfig);
         SecurityService securityService = new SecurityServiceImpl(userManagerService);
         Optional<UserData> authorized = null;
         Optional<Set<RoleId>> roles = null;
@@ -104,7 +104,7 @@ public class SecurityServiceTest {
     @Test
     public void testInvalidLogin() {
         FileServerConfig fileServerConfig = TestUtils.createFileServerConfigForSecurityService();
-        UserManagerService userManagerService = new UserManagerServiceImpl(fileServerConfig);
+        UserManagerService userManagerService = new UserManagerServiceInmemory(fileServerConfig);
         SecurityService securityService = new SecurityServiceImpl(userManagerService);
         Optional<UserData> authorized = null;
         Optional<Set<RoleId>> roles = null;
@@ -127,7 +127,7 @@ public class SecurityServiceTest {
     @Test
     public void testAnonymousSession() {
         FileServerConfig fileServerConfig = TestUtils.createFileServerConfigForSecurityService();
-        UserManagerService userManagerService = new UserManagerServiceImpl(fileServerConfig);
+        UserManagerService userManagerService = new UserManagerServiceInmemory(fileServerConfig);
         SecurityService securityService = new SecurityServiceImpl(userManagerService);
         Optional<UserData> authorized = null;
         Optional<Set<RoleId>> roles = null;
@@ -180,7 +180,7 @@ public class SecurityServiceTest {
     @Test
     public void testAdminSession() {
         FileServerConfig fileServerConfig = TestUtils.createFileServerConfigForSecurityService();
-        UserManagerService userManagerService = new UserManagerServiceImpl(fileServerConfig);
+        UserManagerService userManagerService = new UserManagerServiceInmemory(fileServerConfig);
         SecurityService securityService = new SecurityServiceImpl(userManagerService);
         Optional<UserData> authorized = null;
         Optional<Set<RoleId>> roles = null;

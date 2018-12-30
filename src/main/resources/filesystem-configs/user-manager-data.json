@@ -1,0 +1,21 @@
+{
+  "adminRole": "admins",
+  "anonymousRole": "anonymous",
+  "users" : [
+    {
+      "username": "admin",
+      "password": "secret",
+      "roles": [ "admins" ]
+    },
+    {
+      "username": "user1",
+      "password": "secret",
+      "roles": [ "user1", "users" ]
+    },
+    {
+      "username": "user2",
+      "password": "secret",
+      "roles": [ "user2", "users" ]
+    }
+  ]
+}

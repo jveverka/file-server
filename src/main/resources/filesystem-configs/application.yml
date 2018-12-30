@@ -1,0 +1,17 @@
+
+server:
+  port: 8888
+  session:
+    timeout: 10 #http session timeout in minutes
+#  port: 8443
+#  ssl:
+#    key-store: classpath:keystore.jks
+#    key-store-password: secret
+#    keyStoreType: JKS
+#    keyAlias: localhost
+
+fileserver:
+   home: /opt/file-server/files
+   data:
+     storage: filesystem
+     basedir: /opt/file-server/data

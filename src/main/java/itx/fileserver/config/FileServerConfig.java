@@ -20,14 +20,17 @@ public class FileServerConfig {
     @Value("${server.session.timeout}")
     private int sessionTimeout;
 
-    @Value("${fileserver.anonymous.role}")
+    @Value("${fileserver.anonymous.role:#{null}}")
     private String anonymousRole;
 
-    @Value("${fileserver.admin.role}")
+    @Value("${fileserver.admin.role:#{null}}")
     private String adminRole;
 
-    @Value("${fileserver.data.storage}")
+    @Value("${fileserver.data.storage:#{null}}")
     private String dataStorage;
+
+    @Value("${fileserver.data.basedir:#{null}}")
+    private String dataBasedir;
 
     private List<UserConfig> users;
 
@@ -87,5 +90,13 @@ public class FileServerConfig {
 
     public void setDataStorage(String dataStorage) {
         this.dataStorage = dataStorage;
+    }
+
+    public String getDataBasedir() {
+        return dataBasedir;
+    }
+
+    public void setDataBasedir(String dataBasedir) {
+        this.dataBasedir = dataBasedir;
     }
 }

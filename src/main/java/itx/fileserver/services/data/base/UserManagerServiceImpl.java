@@ -1,6 +1,5 @@
-package itx.fileserver.services.data.inmemory;
+package itx.fileserver.services.data.base;
 
-import itx.fileserver.config.FileServerConfig;
 import itx.fileserver.services.data.UserManagerService;
 import itx.fileserver.services.dto.RoleId;
 import itx.fileserver.services.dto.UserData;
@@ -11,34 +10,16 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class UserManagerServiceImpl implements UserManagerService {
+public abstract class UserManagerServiceImpl implements UserManagerService {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserManagerServiceImpl.class);
 
-    private final Map<UserId, UserData> users;
-    private final RoleId anonymousRole;
-    private final RoleId adminRole;
-
-    public UserManagerServiceImpl(FileServerConfig fileServerConfig) {
-        this.users = new ConcurrentHashMap<>();
-        fileServerConfig.getUsers().forEach(uc->{
-            Set<RoleId> roles = new HashSet<>();
-            uc.getRoles().forEach(r-> {
-                roles.add(new RoleId(r));
-            });
-            UserData userData = new UserData(new UserId(uc.getUsername()), roles, uc.getPassword());
-            LOG.info("User: {}", uc.getUsername());
-            users.put(userData.getId(), userData);
-        });
-        this.anonymousRole = new RoleId(fileServerConfig.getAnonymousRole());
-        this.adminRole = new RoleId(fileServerConfig.getAdminRole());
-    }
+    protected Map<UserId, UserData> users;
+    protected RoleId anonymousRole;
+    protected RoleId adminRole;
 
     @Override
     public Optional<UserData> getUser(UserId id) {
@@ -56,11 +37,13 @@ public class UserManagerServiceImpl implements UserManagerService {
             throw new UnsupportedOperationException();
         }
         users.put(userData.getId(), userData);
+        persist();
     }
 
     @Override
     public void removeUser(UserId id) {
         users.remove(id);
+        persist();
     }
 
     @Override
@@ -72,5 +55,7 @@ public class UserManagerServiceImpl implements UserManagerService {
     public RoleId getAdminRole() {
         return adminRole;
     }
+
+    public abstract void persist();
 
 }

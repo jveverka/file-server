@@ -24,11 +24,16 @@ user access control and security.
 * Transport protocols: http or https
 * Single jar distribution (~16MB).  
 * Admin APIs for monitoring and management access and users/roles
+* Server setup is stored in memory or on file system.
 
 ## Planned features
 * web UI / web client for REST APIs
 * compressed directory download
 * compressed directory upload
+
+## Configurations
+FileServer may be configured in several distinct ways. Check
+[configurations examples](docs/Configurations.md) chapter for more examples.
 
 ## Requirements for developers
 * [JDK 11](https://jdk.java.net/11/) or later (JDK 8 is supported as well)
@@ -80,19 +85,24 @@ See this [example](src/main/resources/application.yml) of server configuration.
   ``curl -X GET http://localhost:8888/services/auth/logout -b /tmp/cookies.txt``
 
 ### Admin access
-Selected role may be used for admin access. Admin users have access to special dedicated REST endpoints.
+Selected role ``fileserver.admin.role`` is used for admin access. Users with this role have access to special dedicated REST endpoints.
 See this [example](src/main/resources/application.yml) of server configuration.
+Refer to [attached postman collection](docs/FileServer.postman_collection.json) for all admin APIs.
 
-#### Get volume info
-* __GET__ http://localhost:8888/services/admin/storage/info - get info about storage (storage base path, free space and total space)  
-  ``curl -X GET http://localhost:8888/services/admin/storage/info -b /tmp/cookies.txt``
-
-#### Get active sessions
-* __GET__ http://localhost:8888/services/admin/sessions - get list of active user sessions  
-  ``curl -X GET http://localhost:8888/services/admin/sessions -b /tmp/cookies.txt``
-
-#### Other admin REST APIs
-See [attached postman collection](docs/FileServer.postman_collection.json) for all admin APIs.
+#### Implemented admin features
+* get volume information - base directory, used and free space
+* get all open/active user sessions
+* terminate selected user's session
+* user management
+  - get name of admin role
+  - get name of anonymous role
+  - list all users
+  - create new user
+  - remove user
+* file access filter management
+  - list all access filters
+  - create new access filter
+  - remove existing access filter
 
 ### Build and Run
 Variable ``file.server.home`` in ``application.yml`` file defines *base directory* to be exposed via REST APIs.
