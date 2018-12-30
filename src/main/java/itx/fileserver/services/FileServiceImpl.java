@@ -1,11 +1,13 @@
 package itx.fileserver.services;
 
 import itx.fileserver.config.FileServerConfig;
+import itx.fileserver.services.data.AuditService;
+import itx.fileserver.services.dto.AuditRecord;
 import itx.fileserver.services.dto.DirectoryInfo;
 import itx.fileserver.services.dto.FileInfo;
 import itx.fileserver.services.dto.FileList;
 import itx.fileserver.services.dto.FileStorageInfo;
-import itx.fileserver.services.dto.RoleId;
+import itx.fileserver.services.dto.UserData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +26,10 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Set;
+import java.time.Instant;
 import java.util.stream.Stream;
+
+import static itx.fileserver.services.dto.AuditConstants.FILE_ACCESS;
 
 @Service
 public class FileServiceImpl implements FileService {
@@ -34,13 +38,16 @@ public class FileServiceImpl implements FileService {
 
     private final Path fileStorageLocation;
     private final FileAccessService fileAccessService;
+    private final AuditService auditService;
 
     @Autowired
-    public FileServiceImpl(FileServerConfig fileServerConfig, FileAccessService fileAccessService) {
+    public FileServiceImpl(FileServerConfig fileServerConfig, FileAccessService fileAccessService,
+                           AuditService auditService) {
         LOG.info("fileStorageLocation={}", fileServerConfig.getHome());
         this.fileAccessService = fileAccessService;
         this.fileStorageLocation = Paths.get(fileServerConfig.getHome())
                 .toAbsolutePath().normalize();
+        this.auditService = auditService;
     }
 
     @Override
@@ -50,13 +57,14 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public Resource loadFileAsResource(Set<RoleId> roles, Path filePath) throws FileNotFoundException, OperationNotAllowedException {
+    public Resource loadFileAsResource(UserData userData, Path filePath) throws FileNotFoundException, OperationNotAllowedException {
         LOG.info("loadFileAsResource: {}", filePath);
         try {
-            verifyReadAccess(roles, filePath);
+            verifyReadAccess(userData, filePath);
             Path resolvedFilePath = this.fileStorageLocation.resolve(filePath).normalize();
             Resource resource = new UrlResource(resolvedFilePath.toUri());
             if(resource.exists()) {
+                createDownloadFileAuditRecord(userData, filePath);
                 return resource;
             } else {
                 throw new FileNotFoundException("File not found " + filePath);
@@ -67,15 +75,15 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public FileList getFilesInfo(Set<RoleId> roles, Path filePath) throws IOException, OperationNotAllowedException {
+    public FileList getFilesInfo(UserData userData, Path filePath) throws IOException, OperationNotAllowedException {
         LOG.info("getFilesInfo: {}", filePath);
-        verifyReadAccess(roles, filePath.resolve("*"));
+        verifyReadAccess(userData, filePath.resolve("*"));
         FileList fileList = new FileList(filePath.toString());
         Path resolvedFilePath = this.fileStorageLocation.resolve(filePath).normalize();
         try (Stream<Path> filesWalk = Files.walk(resolvedFilePath, 1)) {
             filesWalk.forEach(fw -> {
                 Path pathToCheck = Paths.get(filePath.toString(), fw.getFileName().toString());
-                if (fileAccessService.canRead(roles, pathToCheck)) {
+                if (fileAccessService.canRead(userData.getRoles(), pathToCheck)) {
                     if (resolvedFilePath.endsWith(fw)) {
                         //skip parent directory
                     } else if (Files.isDirectory(fw)) {
@@ -90,25 +98,27 @@ public class FileServiceImpl implements FileService {
                 }
             });
         }
+        createListDirectoryAuditRecord(userData, filePath);
         return fileList;
     }
 
     @Override
-    public void saveFile(Set<RoleId> roles, Path filePath, InputStream inputStream) throws IOException, OperationNotAllowedException {
+    public void saveFile(UserData userData, Path filePath, InputStream inputStream) throws IOException, OperationNotAllowedException {
         LOG.info("saveFile: {}", filePath);
-        verifyReadAndWriteAccess(roles, filePath);
+        verifyReadAndWriteAccess(userData, filePath);
         Path resolvedFilePath = this.fileStorageLocation.resolve(filePath).normalize();
         byte[] buffer = new byte[inputStream.available()];
         inputStream.read(buffer);
         File targetFile = resolvedFilePath.toFile();
         OutputStream outStream = new FileOutputStream(targetFile);
         outStream.write(buffer);
+        createUploadFileAuditRecord(userData, filePath);
     }
 
     @Override
-    public void delete(Set<RoleId> roles, Path filePath) throws IOException, OperationNotAllowedException {
+    public void delete(UserData userData, Path filePath) throws IOException, OperationNotAllowedException {
         LOG.info("delete: {}", filePath);
-        verifyReadAndWriteAccess(roles, filePath);
+        verifyReadAndWriteAccess(userData, filePath);
         Path resolvedFilePath = this.fileStorageLocation.resolve(filePath).normalize();
         LOG.info("deleting: {}", resolvedFilePath.toString());
         if (Files.isDirectory(resolvedFilePath)) {
@@ -116,21 +126,23 @@ public class FileServiceImpl implements FileService {
         } else {
             Files.delete(resolvedFilePath);
         }
+        createDeleteAuditRecord(userData, filePath);
     }
 
     @Override
-    public void createDirectory(Set<RoleId> roles, Path filePath) throws IOException, OperationNotAllowedException {
+    public void createDirectory(UserData userData, Path filePath) throws IOException, OperationNotAllowedException {
         LOG.info("createDirectory: {}", filePath);
-        verifyReadAndWriteAccess(roles, filePath);
+        verifyReadAndWriteAccess(userData, filePath);
         Path resolvedFilePath = this.fileStorageLocation.resolve(filePath).normalize();
         Files.createDirectories(resolvedFilePath);
+        createCreateDirectoryAuditRecord(userData, filePath);
     }
 
     @Override
-    public void move(Set<RoleId> roles, Path sourcePath, Path destinationPath) throws IOException, OperationNotAllowedException {
+    public void move(UserData userData, Path sourcePath, Path destinationPath) throws IOException, OperationNotAllowedException {
         LOG.info("move: {}->{}", sourcePath, destinationPath);
-        verifyReadAndWriteAccess(roles, sourcePath);
-        verifyReadAndWriteAccess(roles, destinationPath);
+        verifyReadAndWriteAccess(userData, sourcePath);
+        verifyReadAndWriteAccess(userData, destinationPath);
         Path resolvedSourcePath = this.fileStorageLocation.resolve(sourcePath).normalize();
         Path resolvedDestinationPath = this.fileStorageLocation.resolve(destinationPath).normalize();
         if (Files.isRegularFile(resolvedSourcePath)) {
@@ -143,19 +155,57 @@ public class FileServiceImpl implements FileService {
             LOG.error("source must be both file or directory");
             throw new OperationNotAllowedException();
         }
-
+        createMoveAuditRecord(userData, sourcePath, destinationPath);
     }
 
-    private void verifyReadAccess(Set<RoleId> roles, Path filePath) throws OperationNotAllowedException {
-        if (!fileAccessService.canRead(roles, filePath)) {
+    private void verifyReadAccess(UserData userData, Path filePath) throws OperationNotAllowedException {
+        if (!fileAccessService.canRead(userData.getRoles(), filePath)) {
             throw new OperationNotAllowedException();
         }
     }
 
-    private void verifyReadAndWriteAccess(Set<RoleId> roles, Path filePath) throws OperationNotAllowedException {
-        if (!fileAccessService.canReadAndWrite(roles, filePath)) {
+    private void verifyReadAndWriteAccess(UserData userData, Path filePath) throws OperationNotAllowedException {
+        if (!fileAccessService.canReadAndWrite(userData.getRoles(), filePath)) {
             throw new OperationNotAllowedException();
         }
+    }
+
+    /* AUDIT METHODS */
+
+    private void createDownloadFileAuditRecord(UserData userData, Path filePath) {
+        AuditRecord auditRecord = new AuditRecord(Instant.now().getEpochSecond(), FILE_ACCESS.NAME,
+                FILE_ACCESS.DOWNLOAD, userData.getId().getId(), filePath.toString(), "OK", "");
+        auditService.storeAudit(auditRecord);
+    }
+
+    private void createListDirectoryAuditRecord(UserData userData, Path filePath) {
+        AuditRecord auditRecord = new AuditRecord(Instant.now().getEpochSecond(), FILE_ACCESS.NAME,
+                FILE_ACCESS.LIST_DIR, userData.getId().getId(), filePath.toString(), "OK", "");
+        auditService.storeAudit(auditRecord);
+    }
+
+    private void createUploadFileAuditRecord(UserData userData, Path filePath) {
+        AuditRecord auditRecord = new AuditRecord(Instant.now().getEpochSecond(), FILE_ACCESS.NAME,
+                FILE_ACCESS.UPLOAD, userData.getId().getId(), filePath.toString(), "OK", "");
+        auditService.storeAudit(auditRecord);
+    }
+
+    private void createDeleteAuditRecord(UserData userData, Path filePath) {
+        AuditRecord auditRecord = new AuditRecord(Instant.now().getEpochSecond(), FILE_ACCESS.NAME,
+                FILE_ACCESS.DELETE, userData.getId().getId(), filePath.toString(), "OK", "");
+        auditService.storeAudit(auditRecord);
+    }
+
+    private void createCreateDirectoryAuditRecord(UserData userData, Path filePath) {
+        AuditRecord auditRecord = new AuditRecord(Instant.now().getEpochSecond(), FILE_ACCESS.NAME,
+                FILE_ACCESS.CREATE_DIR, userData.getId().getId(), filePath.toString(), "OK", "");
+        auditService.storeAudit(auditRecord);
+    }
+
+    private void createMoveAuditRecord(UserData userData, Path sourcePath, Path destinationPath) {
+        AuditRecord auditRecord = new AuditRecord(Instant.now().getEpochSecond(), FILE_ACCESS.NAME,
+                FILE_ACCESS.MOVE, userData.getId().getId(), sourcePath.toString(), "OK", destinationPath.toString());
+        auditService.storeAudit(auditRecord);
     }
 
 }

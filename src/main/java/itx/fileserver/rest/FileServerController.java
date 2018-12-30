@@ -1,14 +1,12 @@
 package itx.fileserver.rest;
 
 import itx.fileserver.rest.dto.MoveRequest;
-import itx.fileserver.services.FileAccessService;
 import itx.fileserver.services.FileService;
 import itx.fileserver.services.OperationNotAllowedException;
 import itx.fileserver.services.SecurityService;
 import itx.fileserver.services.dto.FileList;
-import itx.fileserver.services.dto.FileStorageInfo;
-import itx.fileserver.services.dto.RoleId;
 import itx.fileserver.services.dto.SessionId;
+import itx.fileserver.services.dto.UserData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +30,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
-import java.util.Set;
 
 @RestController
 @RequestMapping(path = FileServerController.URI_PREFIX)
@@ -66,11 +63,11 @@ public class FileServerController {
         try {
             String contextPath = httpServletRequest.getRequestURI();
             SessionId sessionId = new SessionId(httpServletRequest.getSession().getId());
-            Optional<Set<RoleId>> roles = securityService.getRoles(sessionId);
-            if (roles.isPresent()) {
+            Optional<UserData> userData = securityService.isAuthorized(sessionId);
+            if (userData.isPresent()) {
                 Path filePath = Paths.get(contextPath.substring((URI_PREFIX + DOWNLOAD_PREFIX).length()));
                 LOG.info("downloadFile: {}", filePath);
-                Resource resource = fileService.loadFileAsResource(roles.get(), filePath);
+                Resource resource = fileService.loadFileAsResource(userData.get(), filePath);
                 String contentType = "application/octet-stream";
                 return ResponseEntity.ok()
                         .contentType(MediaType.parseMediaType(contentType))
@@ -90,11 +87,11 @@ public class FileServerController {
         try {
             String contextPath = httpServletRequest.getRequestURI();
             SessionId sessionId = new SessionId(httpServletRequest.getSession().getId());
-            Optional<Set<RoleId>> roles = securityService.getRoles(sessionId);
-            if (roles.isPresent()) {
+            Optional<UserData> userData = securityService.isAuthorized(sessionId);
+            if (userData.isPresent()) {
                 Path filePath = Paths.get(contextPath.substring((URI_PREFIX + LIST_PREFIX).length()));
                 LOG.info("getFiles: {}", filePath);
-                FileList fileInfo = fileService.getFilesInfo(roles.get(), filePath);
+                FileList fileInfo = fileService.getFilesInfo(userData.get(), filePath);
                 return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(fileInfo);
             }
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -110,11 +107,11 @@ public class FileServerController {
         try {
             String contextPath = httpServletRequest.getRequestURI();
             SessionId sessionId = new SessionId(httpServletRequest.getSession().getId());
-            Optional<Set<RoleId>> roles = securityService.getRoles(sessionId);
-            if (roles.isPresent()) {
+            Optional<UserData> userData = securityService.isAuthorized(sessionId);
+            if (userData.isPresent()) {
                 Path filePath = Paths.get(contextPath.substring((URI_PREFIX + UPLOAD_PREFIX).length()));
                 LOG.info("upload: {}", filePath);
-                fileService.saveFile(roles.get(), filePath, file.getInputStream());
+                fileService.saveFile(userData.get(), filePath, file.getInputStream());
                 return ResponseEntity.ok().build();
             }
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -130,11 +127,11 @@ public class FileServerController {
         try {
             String contextPath = httpServletRequest.getRequestURI();
             SessionId sessionId = new SessionId(httpServletRequest.getSession().getId());
-            Optional<Set<RoleId>> roles = securityService.getRoles(sessionId);
-            if (roles.isPresent()) {
+            Optional<UserData> userData = securityService.isAuthorized(sessionId);
+            if (userData.isPresent()) {
                 Path filePath = Paths.get(contextPath.substring((URI_PREFIX + DELETE_PREFIX).length()));
                 LOG.info("delete: {}", filePath);
-                fileService.delete(roles.get(), filePath);
+                fileService.delete(userData.get(), filePath);
                 return ResponseEntity.ok().build();
             }
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -150,11 +147,11 @@ public class FileServerController {
         try {
             String contextPath = httpServletRequest.getRequestURI();
             SessionId sessionId = new SessionId(httpServletRequest.getSession().getId());
-            Optional<Set<RoleId>> roles = securityService.getRoles(sessionId);
-            if (roles.isPresent()) {
+            Optional<UserData> userData = securityService.isAuthorized(sessionId);
+            if (userData.isPresent()) {
                 Path filePath = Paths.get(contextPath.substring((URI_PREFIX + CREATEDIR_PREFIX).length()));
                 LOG.info("createDirectory: {}", filePath);
-                fileService.createDirectory(roles.get(), filePath);
+                fileService.createDirectory(userData.get(), filePath);
                 return ResponseEntity.ok().build();
             }
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -170,12 +167,12 @@ public class FileServerController {
         try {
             String contextPath = httpServletRequest.getRequestURI();
             SessionId sessionId = new SessionId(httpServletRequest.getSession().getId());
-            Optional<Set<RoleId>> roles = securityService.getRoles(sessionId);
-            if (roles.isPresent()) {
+            Optional<UserData> userData = securityService.isAuthorized(sessionId);
+            if (userData.isPresent()) {
                 Path sourcePath = Paths.get(contextPath.substring((URI_PREFIX + MOVE_PREFIX).length()));
                 Path destinationPath = Paths.get(moveRequest.getDestinationPath());
                 LOG.info("move: {}->{}", sourcePath.toString(), destinationPath.toString());
-                fileService.move(roles.get(), sourcePath, destinationPath);
+                fileService.move(userData.get(), sourcePath, destinationPath);
                 return ResponseEntity.ok().build();
             }
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

@@ -1,15 +1,23 @@
 package itx.fileserver.test.mocks;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import itx.fileserver.services.data.base.AuditQueryFilter;
 import itx.fileserver.services.data.filesystem.PersistenceService;
+import itx.fileserver.services.dto.AuditQuery;
+import itx.fileserver.services.dto.AuditRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.stream.Collectors;
 
 public class PersistenceServiceImpl implements PersistenceService {
 
@@ -17,10 +25,12 @@ public class PersistenceServiceImpl implements PersistenceService {
 
     private final Map<Key, String> data;
     private final ObjectMapper objectMapper;
+    private final Map<Path, Deque<AuditRecord>> records;
 
     public PersistenceServiceImpl() {
         this.data = new HashMap<>();
         this.objectMapper = new ObjectMapper();
+        this.records = new HashMap<>();
     }
 
     @Override
@@ -36,6 +46,26 @@ public class PersistenceServiceImpl implements PersistenceService {
         Key key = new Key(type, path);
         String stringData = this.data.get(key);
         return objectMapper.readValue(stringData, type);
+    }
+
+    @Override
+    public void append(Path path, AuditRecord data) throws IOException {
+        Deque<AuditRecord> auditRecords = records.get(path);
+        if (auditRecords == null) {
+            auditRecords  = new ConcurrentLinkedDeque<>();
+            records.put(path, auditRecords);
+        }
+        auditRecords.add(data);
+    }
+
+    @Override
+    public Collection<AuditRecord> filterAudits(Path path, AuditQuery auditQuery) throws IOException {
+        Deque<AuditRecord> auditRecords = records.get(path);
+        if (auditRecords != null) {
+            AuditQueryFilter auditQueryFilter = new AuditQueryFilter(auditQuery);
+            return auditRecords.stream().filter(auditQueryFilter).collect(Collectors.toList());
+        }
+        return Collections.EMPTY_LIST;
     }
 
     private class Key {

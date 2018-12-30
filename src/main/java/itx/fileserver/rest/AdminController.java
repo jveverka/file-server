@@ -3,8 +3,11 @@ package itx.fileserver.rest;
 import itx.fileserver.config.dto.UserConfig;
 import itx.fileserver.services.FileService;
 import itx.fileserver.services.SecurityService;
+import itx.fileserver.services.data.AuditService;
 import itx.fileserver.services.data.FileAccessManagerService;
 import itx.fileserver.services.data.UserManagerService;
+import itx.fileserver.services.dto.AuditQuery;
+import itx.fileserver.services.dto.AuditRecord;
 import itx.fileserver.services.dto.FileStorageInfo;
 import itx.fileserver.services.dto.FilterConfig;
 import itx.fileserver.services.dto.RoleId;
@@ -26,10 +29,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+
+import static itx.fileserver.services.dto.AuditConstants.ADMIN_ACCESS;
 
 @RestController
 @RequestMapping(path = "/services/admin")
@@ -41,17 +47,20 @@ public class AdminController {
     private final SecurityService securityService;
     private final UserManagerService userManagerService;
     private final FileAccessManagerService fileAccessManagerService;
+    private final AuditService auditService;
 
     @Autowired
     private HttpSession httpSession;
 
     @Autowired
     public AdminController(FileService fileService, SecurityService securityService,
-                           UserManagerService userManagerService, FileAccessManagerService fileAccessManagerService) {
+                           UserManagerService userManagerService, FileAccessManagerService fileAccessManagerService,
+                           AuditService auditService) {
         this.fileService = fileService;
         this.securityService = securityService;
         this.userManagerService = userManagerService;
         this.fileAccessManagerService = fileAccessManagerService;
+        this.auditService = auditService;
     }
 
     @GetMapping("/storage/info")
@@ -77,6 +86,8 @@ public class AdminController {
     @GetMapping("/users/all")
     public ResponseEntity<Collection<UserData>> getUsers() {
         LOG.info("getUsers:");
+        Optional<UserData> authorized = securityService.isAuthorized(new SessionId(httpSession.getId()));
+        createGetUsersAuditRecord(authorized);
         return ResponseEntity.ok().body(userManagerService.getUsers());
     }
 
@@ -102,6 +113,8 @@ public class AdminController {
             });
             UserData userData = new UserData(new UserId(userConfig.getUsername()), roles, userConfig.getPassword());
             userManagerService.addUser(userData);
+            Optional<UserData> authorized = securityService.isAuthorized(new SessionId(httpSession.getId()));
+            createCreateUserAuditRecord(authorized, userConfig);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -115,6 +128,7 @@ public class AdminController {
         Optional<UserData> authorized = securityService.isAuthorized(sessionId);
         if (authorized.isPresent() && (!userId.equals(authorized.get().getId().getId()))) {
             userManagerService.removeUser(new UserId(userId));
+            createRemoveUserAuditRecord(authorized, userId);
             return ResponseEntity.ok().build();
         } else {
             LOG.error("Can't delete current user {} ! Use different user account to delete this user.", userId);
@@ -125,6 +139,8 @@ public class AdminController {
     @GetMapping("/file/access/filters")
     public ResponseEntity<Collection<FilterConfig>> getFileAccessFilters() {
         LOG.info("getFileAccessFilters:");
+        Optional<UserData> authorized = securityService.isAuthorized(new SessionId(httpSession.getId()));
+        createGetFileAccessFiltersAuditRecord(authorized);
         return ResponseEntity.ok().body(fileAccessManagerService.getFilters());
     }
 
@@ -132,6 +148,8 @@ public class AdminController {
     public ResponseEntity addFileAccessFilter(@RequestBody FilterConfig filterConfig) {
         LOG.info("addFileAccessFilter: {} {} {}", filterConfig.getPath(), filterConfig.getAccess(), filterConfig.getRoles());
         fileAccessManagerService.addFilter(filterConfig);
+        Optional<UserData> authorized = securityService.isAuthorized(new SessionId(httpSession.getId()));
+        createCreateFileAccessFilterAuditRecord(authorized, filterConfig);
         return ResponseEntity.ok().build();
     }
 
@@ -139,7 +157,54 @@ public class AdminController {
     public ResponseEntity removeFileAccessFilter(@RequestBody FilterConfig filterConfig) {
         LOG.info("removeFileAccessFilter: {} {} {}", filterConfig.getPath(), filterConfig.getAccess(), filterConfig.getRoles());
         fileAccessManagerService.removeFilter(filterConfig);
+        Optional<UserData> authorized = securityService.isAuthorized(new SessionId(httpSession.getId()));
+        createRemoveFileAccessFilterAuditRecord(authorized, filterConfig);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/audit")
+    public ResponseEntity<Collection<AuditRecord>> getAuditRecords(@RequestBody AuditQuery auditQuery) {
+        LOG.info("getAuditRecords:");
+        Collection<AuditRecord> audits = auditService.getAudits(auditQuery);
+        return ResponseEntity.ok().body(audits);
+    }
+
+    /* AUDIT METHODS */
+
+    public void createGetUsersAuditRecord(Optional<UserData> userData) {
+        AuditRecord auditRecord = new AuditRecord(Instant.now().getEpochSecond(), ADMIN_ACCESS.NAME, ADMIN_ACCESS.GET_USERS,
+                userData.get().getId().getId(), "", "OK", "");
+        auditService.storeAudit(auditRecord);
+    }
+
+    public void createCreateUserAuditRecord(Optional<UserData> userData, UserConfig userConfig) {
+        AuditRecord auditRecord = new AuditRecord(Instant.now().getEpochSecond(), ADMIN_ACCESS.NAME, ADMIN_ACCESS.CREATE_USER,
+                userData.get().getId().getId(), "", "OK", userConfig.getUsername());
+        auditService.storeAudit(auditRecord);
+    }
+
+    public void createRemoveUserAuditRecord(Optional<UserData> userData, String userId) {
+        AuditRecord auditRecord = new AuditRecord(Instant.now().getEpochSecond(), ADMIN_ACCESS.NAME, ADMIN_ACCESS.DELETE_USER,
+                userData.get().getId().getId(), "", "OK", userId);
+        auditService.storeAudit(auditRecord);
+    }
+
+    public void createGetFileAccessFiltersAuditRecord(Optional<UserData> userData) {
+        AuditRecord auditRecord = new AuditRecord(Instant.now().getEpochSecond(), ADMIN_ACCESS.NAME, ADMIN_ACCESS.GET_ACCESS_FILTERS,
+                userData.get().getId().getId(), "", "OK", "");
+        auditService.storeAudit(auditRecord);
+    }
+
+    public void createCreateFileAccessFilterAuditRecord(Optional<UserData> userData, FilterConfig filterConfig) {
+        AuditRecord auditRecord = new AuditRecord(Instant.now().getEpochSecond(), ADMIN_ACCESS.NAME, ADMIN_ACCESS.CREATE_ACCESS_FILTER,
+                userData.get().getId().getId(), "", "OK", filterConfig.getAccess());
+        auditService.storeAudit(auditRecord);
+    }
+
+    public void createRemoveFileAccessFilterAuditRecord(Optional<UserData> userData, FilterConfig filterConfig) {
+        AuditRecord auditRecord = new AuditRecord(Instant.now().getEpochSecond(), ADMIN_ACCESS.NAME, ADMIN_ACCESS.DELETE_ACCESS_FILTER,
+                userData.get().getId().getId(), "", "OK", filterConfig.getAccess());
+        auditService.storeAudit(auditRecord);
     }
 
 }

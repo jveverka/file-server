@@ -57,7 +57,7 @@ public interface SecurityService {
     void terminateSession(SessionId sessionId);
 
     /**
-     * Get roles for existing session.
+     * Get userData for existing session.
      * @param sessionId unique session id.
      * @return set of user's roles for the session or empty if session does not exist.
      */

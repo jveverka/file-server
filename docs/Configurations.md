@@ -66,6 +66,7 @@ and every modification in those data is persisted back in json files.
 Required json files:
 * __file-access-manager-data.json__ - stores file access filters. See [this](../src/main/resources/filesystem-configs/file-access-manager-data.json) example.
 * __user-manager-data.json__ - stores user data. See [this](../src/main/resources/filesystem-configs/user-manager-data.json) example.
+* __audit-data.log__ - log file which keeps audit records. New records are appended to the end of this file.
 
 FileServer expects data files to be located in ``fileserver.data.basedir`` directory.
 When FileServer is started or data is changed via admin REST APIs, new data is stored on the file system, json files are overwritten.

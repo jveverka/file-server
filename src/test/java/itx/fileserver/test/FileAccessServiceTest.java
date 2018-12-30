@@ -5,8 +5,10 @@ import itx.fileserver.services.FileAccessService;
 import itx.fileserver.services.FileAccessServiceImpl;
 import itx.fileserver.services.SecurityService;
 import itx.fileserver.services.SecurityServiceImpl;
+import itx.fileserver.services.data.AuditService;
 import itx.fileserver.services.data.FileAccessManagerService;
 import itx.fileserver.services.data.UserManagerService;
+import itx.fileserver.services.data.inmemory.AuditServiceInmemory;
 import itx.fileserver.services.data.inmemory.FileAccessManagerServiceInmemory;
 import itx.fileserver.services.data.inmemory.UserManagerServiceInmemory;
 import itx.fileserver.services.dto.RoleId;
@@ -41,7 +43,8 @@ public class FileAccessServiceTest {
         FileServerConfig fileServerConfig = TestUtils.createFileServerConfigForFileAccessService();
         UserManagerService userManagerService = new UserManagerServiceInmemory(fileServerConfig);
         FileAccessManagerService fileAccessManagerService = new FileAccessManagerServiceInmemory(fileServerConfig);
-        securityService = new SecurityServiceImpl(userManagerService);
+        AuditService auditService = new AuditServiceInmemory(1024);
+        securityService = new SecurityServiceImpl(userManagerService, auditService);
         fileAccessService = new FileAccessServiceImpl(fileAccessManagerService);
         Optional<UserData> authorized = null;
 

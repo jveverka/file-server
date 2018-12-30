@@ -23,7 +23,8 @@ user access control and security.
 * Privileged admin role for server setup and monitoring
 * Transport protocols: http or https
 * Single jar distribution (~16MB).  
-* Admin APIs for monitoring and management access and users/roles
+* Admin APIs for monitoring and management access and users/roles.
+* Audit APIs for admin, to check activities on server.
 * Server setup is stored in memory or on file system.
 
 ## Planned features

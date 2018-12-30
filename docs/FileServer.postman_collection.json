@@ -106,7 +106,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"path\": \"somedir/subdir/*\",\n\t\"access\": \"READ_WRITE\",\n\t\"roles\": [ \"public\", \"static\" ]\n}"
+							"raw": "{\n\t\"path\": \"*\",\n\t\"access\": \"READ_WRITE\",\n\t\"roles\": [ \"admin\" ]\n}"
 						},
 						"description": ""
 					},
@@ -167,6 +167,26 @@
 						"method": "DELETE",
 						"header": [],
 						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get all audits",
+					"request": {
+						"url": "http://localhost:8888/services/admin/audit",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\n}"
+						},
 						"description": ""
 					},
 					"response": []
