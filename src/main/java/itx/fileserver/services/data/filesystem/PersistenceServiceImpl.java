@@ -43,7 +43,11 @@ public class PersistenceServiceImpl implements PersistenceService {
     @Override
     public void append(Path path, AuditRecord record) throws IOException {
         String recordData = objectMapperAppender.writeValueAsString(record) + "\n";
-        Files.write(path, recordData.getBytes(), StandardOpenOption.APPEND);
+        if (path.toFile().isFile()) {
+            Files.write(path, recordData.getBytes(), StandardOpenOption.APPEND);
+        } else {
+            Files.write(path, recordData.getBytes(), StandardOpenOption.CREATE);
+        }
     }
 
     @Override
