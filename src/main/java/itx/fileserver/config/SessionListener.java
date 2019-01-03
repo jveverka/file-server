@@ -34,7 +34,6 @@ public class SessionListener implements HttpSessionListener, HttpSessionIdListen
         LOG.info("setApplicationContext: httpSessionTimeout={}", fileServerConfig.getSessionTimeout());
         if (applicationContext instanceof WebApplicationContext) {
             WebApplicationContext webApplicationContext = (WebApplicationContext) applicationContext;
-            webApplicationContext.getServletContext().addListener(this);
             webApplicationContext.getServletContext().setSessionTimeout(fileServerConfig.getSessionTimeout());
         } else {
             LOG.warn("ERROR: Must be inside a web application context !");
