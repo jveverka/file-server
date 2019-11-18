@@ -1,6 +1,6 @@
 buildscript {
 	ext {
-		springBootVersion = '2.1.1.RELEASE'
+		springBootVersion = '2.2.1.RELEASE'
 	}
 	repositories {
 		mavenCentral()
@@ -21,8 +21,8 @@ version = '1.0.1-SNAPSHOT'
 
 //source compatibility set to java8 because travis CI does not support java11 and gradle support
 //once travis CI is fixed, source compatibility may be bumped to 11
-sourceCompatibility = 10
-targetCompatibility = 10
+sourceCompatibility = 11
+targetCompatibility = 11
 
 repositories {
 	mavenCentral()
