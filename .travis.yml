@@ -1,7 +1,5 @@
-language: java
 dist: xenial
+language: java
 jdk:
-  - openjdk10
-before_install:
-  - gradle -version
+  - openjdk11
 script: gradle clean build test
