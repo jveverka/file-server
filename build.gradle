@@ -32,9 +32,9 @@ repositories {
 
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-web')
-	testCompile('junit:junit:4.12')
-	testCompile('org.mockito:mockito-core:2.23.4')
+	implementation('org.springframework.boot:spring-boot-starter-web')
+	testImplementation('junit:junit:4.12')
+	testImplementation('org.mockito:mockito-core:2.23.4')
 }
 
 test {
