@@ -56,7 +56,7 @@ See also [postman collection example](docs/FileServer.postman_collection.json).
 
 #### Download file  
 * __GET__ http://localhost:8888/services/files/download/** - download file on path. file must exist.   
-  ``curl -X GET http://localhost:8888/services/files/list/path/to/001-data.txt -b /tmp/cookies.txt``
+  ``curl -X GET http://localhost:8888/services/files/download/path/to/001-data.txt -b /tmp/cookies.txt``
 
 #### Upload file
 * __POST__ http://localhost:8888/services/files/upload/** - upload file, parent directory(ies) must exist before upload  
