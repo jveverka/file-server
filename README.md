@@ -76,7 +76,7 @@ See also [postman collection example](docs/FileServer.postman_collection.json).
 
 #### Get audit data
 * __GET__ http://localhost:8888/services/files/audit/** - get audit data for the resource.
-  ``curl -X POST http://localhost:8888/services/files/audit/path/to/source -b /tmp/cookies.txt``
+  ``curl -X GET http://localhost:8888/services/files/audit/path/to/source -b /tmp/cookies.txt``
 
 ### Security
 In order to use file server REST endpoints above, user's http session must be authorized.
