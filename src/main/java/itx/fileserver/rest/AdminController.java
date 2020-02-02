@@ -48,19 +48,18 @@ public class AdminController {
     private final UserManagerService userManagerService;
     private final FileAccessManagerService fileAccessManagerService;
     private final AuditService auditService;
-
-    @Autowired
-    private HttpSession httpSession;
+    private final HttpSession httpSession;
 
     @Autowired
     public AdminController(FileService fileService, SecurityService securityService,
                            UserManagerService userManagerService, FileAccessManagerService fileAccessManagerService,
-                           AuditService auditService) {
+                           AuditService auditService, HttpSession httpSession) {
         this.fileService = fileService;
         this.securityService = securityService;
         this.userManagerService = userManagerService;
         this.fileAccessManagerService = fileAccessManagerService;
         this.auditService = auditService;
+        this.httpSession = httpSession;
     }
 
     @GetMapping("/storage/info")

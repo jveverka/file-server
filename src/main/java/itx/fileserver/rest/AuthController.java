@@ -25,13 +25,12 @@ public class AuthController {
     private static final Logger LOG = LoggerFactory.getLogger(AuthController.class);
 
     private final SecurityService securityService;
+    private final HttpSession httpSession;
 
     @Autowired
-    private HttpSession httpSession;
-
-    @Autowired
-    public AuthController(SecurityService securityService) {
+    public AuthController(SecurityService securityService, HttpSession httpSession) {
         this.securityService = securityService;
+        this.httpSession = httpSession;
     }
 
     @PostMapping("/login")

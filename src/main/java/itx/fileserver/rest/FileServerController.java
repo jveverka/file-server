@@ -49,15 +49,15 @@ public class FileServerController {
 
     private final FileService fileService;
     private final SecurityService securityService;
-
-    @Autowired
-    private HttpServletRequest httpServletRequest;
+    private final HttpServletRequest httpServletRequest;
 
     @Autowired
     public FileServerController(FileService fileService,
-                                SecurityService securityService) {
+                                SecurityService securityService,
+                                HttpServletRequest httpServletRequest) {
         this.fileService = fileService;
         this.securityService = securityService;
+        this.httpServletRequest = httpServletRequest;
     }
 
     @GetMapping(DOWNLOAD_PREFIX + "**")
