@@ -1,5 +1,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Build Status](https://travis-ci.org/jveverka/file-server.svg?branch=master)](https://travis-ci.org/jveverka/file-server)
+[![Java11](https://img.shields.io/badge/java-11-blue)](https://img.shields.io/badge/java-11-blue)
+[![Gradle](https://img.shields.io/badge/gradle-v6.5-blue)](https://img.shields.io/badge/gradle-v6.5-blue)
+![Build and Test](https://github.com/jveverka/file-server/workflows/Build%20and%20Test/badge.svg)
 
 # FileServer 
 This FileServer makes specified *base directory* accessible via REST APIs allowing you 
