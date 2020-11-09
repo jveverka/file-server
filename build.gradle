@@ -1,6 +1,6 @@
 buildscript {
 	ext {
-		springBootVersion = '2.3.4.RELEASE'
+		springBootVersion = '2.3.5.RELEASE'
 	}
 	repositories {
 		mavenCentral()
@@ -32,7 +32,7 @@ repositories {
 dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-web')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
-	testImplementation('org.mockito:mockito-core:3.5.11')
+	testImplementation('org.mockito:mockito-core:3.6.0')
 }
 
 test {
