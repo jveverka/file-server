@@ -2,37 +2,34 @@ package itx.fileserver.test;
 
 import itx.fileserver.services.FileAccessServiceImpl;
 import itx.fileserver.services.dto.AccessType;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
-@RunWith(Parameterized.class)
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class MostRestrictiveAccessTest {
 
-    @Parameterized.Parameters
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-                { createSet(AccessType.NONE), AccessType.NONE, false },
-                { createSet(AccessType.READ), AccessType.NONE, false },
-                { createSet(AccessType.READ_WRITE), AccessType.NONE, false },
+    public static Stream<Arguments> data() {
+        return Stream.of(
+                Arguments.of( createSet(AccessType.NONE), AccessType.NONE, false ),
+                Arguments.of( createSet(AccessType.READ), AccessType.NONE, false ),
+                Arguments.of( createSet(AccessType.READ_WRITE), AccessType.NONE, false ),
 
-                { createSet(AccessType.READ), AccessType.READ, true },
-                { createSet(AccessType.READ, AccessType.READ_WRITE), AccessType.READ, true },
-                { createSet(AccessType.READ_WRITE), AccessType.READ, true },
-                { createSet(AccessType.NONE, AccessType.READ, AccessType.READ_WRITE), AccessType.READ, false },
+                Arguments.of( createSet(AccessType.READ), AccessType.READ, true ),
+                Arguments.of( createSet(AccessType.READ, AccessType.READ_WRITE), AccessType.READ, true ),
+                Arguments.of( createSet(AccessType.READ_WRITE), AccessType.READ, true ),
+                Arguments.of( createSet(AccessType.NONE, AccessType.READ, AccessType.READ_WRITE), AccessType.READ, false ),
 
-                { createSet(AccessType.READ), AccessType.READ_WRITE, false },
-                { createSet(AccessType.READ_WRITE, AccessType.READ), AccessType.READ_WRITE, false },
-                { createSet(AccessType.NONE, AccessType.READ_WRITE, AccessType.READ), AccessType.READ_WRITE, false },
-                { createSet(AccessType.READ_WRITE), AccessType.READ_WRITE, true },
-
-        });
+                Arguments.of( createSet(AccessType.READ), AccessType.READ_WRITE, false ),
+                Arguments.of( createSet(AccessType.READ_WRITE, AccessType.READ), AccessType.READ_WRITE, false ),
+                Arguments.of( createSet(AccessType.NONE, AccessType.READ_WRITE, AccessType.READ), AccessType.READ_WRITE, false ),
+                Arguments.of( createSet(AccessType.READ_WRITE), AccessType.READ_WRITE, true )
+        );
     }
 
     private static Set<AccessType> createSet(AccessType ... accessTypes) {
@@ -43,20 +40,11 @@ public class MostRestrictiveAccessTest {
         return result;
     }
 
-    private final Set<AccessType> accessTypes;
-    private final AccessType actualAccessType;
-    private final boolean expectedResult;
-
-    public MostRestrictiveAccessTest(Set<AccessType> accessTypes, AccessType actualAccessType, boolean expectedResult) {
-        this.accessTypes = accessTypes;
-        this.actualAccessType = actualAccessType;
-        this.expectedResult = expectedResult;
-    }
-
-    @Test
-    public void accessTest() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void accessTest(Set<AccessType> accessTypes, AccessType actualAccessType, boolean expectedResult) {
         boolean result = FileAccessServiceImpl.checkAccessUseMostRestrictive(accessTypes, actualAccessType);
-        Assert.assertTrue(expectedResult == result);
+        assertTrue(expectedResult == result);
     }
 
 }

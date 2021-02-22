@@ -8,60 +8,54 @@ import itx.fileserver.services.data.inmemory.FileAccessManagerServiceInmemory;
 import itx.fileserver.services.dto.FilterConfig;
 import itx.fileserver.services.dto.RoleId;
 import itx.fileserver.test.mocks.PersistenceServiceImpl;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.stream.Stream;
 
-@RunWith(Parameterized.class)
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 public class FileAccessManagerServiceTest {
 
-    private final FileAccessManagerService fileAccessManagerService;
-
-    public FileAccessManagerServiceTest(FileAccessManagerService fileAccessManagerService) {
-        this.fileAccessManagerService = fileAccessManagerService;
+    public static Stream<Arguments> data() {
+        return Stream.of(
+                Arguments.of( createInmemoryFileAccessManagerService() ),
+                Arguments.of( createFilesystemFileAccessManagerService() )
+        );
     }
 
-    @Parameterized.Parameters
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][]{
-                { createInmemoryFileAccessManagerService() },
-                { createFilesystemFileAccessManagerService() }
-        });
-    }
-
-    @Test
-    public void fileAccessManagerServiceTest() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void fileAccessManagerServiceTest(FileAccessManagerService fileAccessManagerService) {
         FilterConfig filterToRemove01 = new FilterConfig("public/readonly/*", "READ", "public");
         FilterConfig filterToRemove02 = new FilterConfig("joe/for-public/*", "READ", "public");
         FilterConfig filterToRemove03 = new FilterConfig("public/*", "READ_WRITE", "public");
         FilterConfig filterToAdd = new FilterConfig("public-dir/*", "READ_WRITE", "public");
         RoleId publicRoleId = new RoleId("public");
 
-        Assert.assertTrue(fileAccessManagerService.getFilters().size() == 8);
-        Assert.assertTrue(fileAccessManagerService.getFilters(publicRoleId).size() == 3);
+        assertTrue(fileAccessManagerService.getFilters().size() == 8);
+        assertTrue(fileAccessManagerService.getFilters(publicRoleId).size() == 3);
 
         fileAccessManagerService.removeFilter(filterToRemove01);
-        Assert.assertTrue(fileAccessManagerService.getFilters().size() == 7);
-        Assert.assertTrue(fileAccessManagerService.getFilters(publicRoleId).size() == 2);
+        assertTrue(fileAccessManagerService.getFilters().size() == 7);
+        assertTrue(fileAccessManagerService.getFilters(publicRoleId).size() == 2);
 
         fileAccessManagerService.removeFilter(filterToRemove02);
-        Assert.assertTrue(fileAccessManagerService.getFilters().size() == 6);
-        Assert.assertTrue(fileAccessManagerService.getFilters(publicRoleId).size() == 1);
+        assertTrue(fileAccessManagerService.getFilters().size() == 6);
+        assertTrue(fileAccessManagerService.getFilters(publicRoleId).size() == 1);
 
         fileAccessManagerService.removeFilter(filterToRemove03);
-        Assert.assertTrue(fileAccessManagerService.getFilters().size() == 5);
-        Assert.assertTrue(fileAccessManagerService.getFilters(publicRoleId).size() == 0);
+        assertTrue(fileAccessManagerService.getFilters().size() == 5);
+        assertTrue(fileAccessManagerService.getFilters(publicRoleId).size() == 0);
 
         fileAccessManagerService.addFilter(filterToAdd);
-        Assert.assertTrue(fileAccessManagerService.getFilters().size() == 6);
-        Assert.assertTrue(fileAccessManagerService.getFilters(publicRoleId).size() == 1);
+        assertTrue(fileAccessManagerService.getFilters().size() == 6);
+        assertTrue(fileAccessManagerService.getFilters(publicRoleId).size() == 1);
     }
 
     private static FileAccessManagerService createInmemoryFileAccessManagerService() {
@@ -78,7 +72,7 @@ public class FileAccessManagerServiceTest {
             persistenceService.persist(path, filterAccessManagerData);
             return new FileAccessManagerServiceFilesystem(path, persistenceService);
         } catch (IOException e) {
-            Assert.fail();
+            fail();
             return null;
         }
     }

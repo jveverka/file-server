@@ -7,124 +7,124 @@ import itx.fileserver.services.data.inmemory.AuditServiceInmemory;
 import itx.fileserver.services.dto.AuditQuery;
 import itx.fileserver.services.dto.AuditRecord;
 import itx.fileserver.test.mocks.PersistenceServiceImpl;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Stream;
 
 import static itx.fileserver.services.dto.AuditConstants.FILE_ACCESS;
 import static itx.fileserver.services.dto.AuditConstants.USER_ACCESS;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(Parameterized.class)
 public class AuditServiceTest {
 
-    private final AuditService auditService;
-
-    public AuditServiceTest(AuditService auditService) {
-        this.auditService = auditService;
+    public static Stream<Arguments> data() {
+        return Stream.of(
+                Arguments.of( createInmemoryAuditService() ),
+                Arguments.of( createFilesystemAuditService() )
+        );
     }
 
-    @Parameterized.Parameters
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][]{
-                { createInmemoryAuditService() },
-                { createFilesystemAuditService() }
-        });
-    }
-
-    @Test
-    public void testQueryAuditServiceMatchAll() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testQueryAuditServiceMatchAll(AuditService auditService) {
         Collection<AuditRecord> audits = auditService.getAudits(AuditQuery.MATCH_ALL);
-        Assert.assertTrue(audits.size() == 10);
+        assertTrue(audits.size() == 10);
     }
 
-    @Test
-    public void testQueryAuditServiceMatchCategory() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testQueryAuditServiceMatchCategory(AuditService auditService) {
         AuditQuery auditQuery = AuditQuery.newBuilder().withCategory(USER_ACCESS.NAME).build();
         Collection<AuditRecord> audits = auditService.getAudits(auditQuery);
-        Assert.assertTrue(audits.size() == 2);
+        assertTrue(audits.size() == 2);
 
         auditQuery = AuditQuery.newBuilder().withCategory(FILE_ACCESS.NAME).build();
         audits = auditService.getAudits(auditQuery);
-        Assert.assertTrue(audits.size() == 8);
+        assertTrue(audits.size() == 8);
     }
 
-    @Test
-    public void testQueryAuditServiceMatchAction() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testQueryAuditServiceMatchAction(AuditService auditService) {
         AuditQuery auditQuery = AuditQuery.newBuilder().withAction(USER_ACCESS.LOGIN).build();
         Collection<AuditRecord> audits = auditService.getAudits(auditQuery);
-        Assert.assertTrue(audits.size() == 1);
+        assertTrue(audits.size() == 1);
 
         auditQuery = AuditQuery.newBuilder().withAction(FILE_ACCESS.DOWNLOAD).build();
         audits = auditService.getAudits(auditQuery);
-        Assert.assertTrue(audits.size() == 2);
+        assertTrue(audits.size() == 2);
 
         auditQuery = AuditQuery.newBuilder().withAction(FILE_ACCESS.LIST_DIR).build();
         audits = auditService.getAudits(auditQuery);
-        Assert.assertTrue(audits.size() == 3);
+        assertTrue(audits.size() == 3);
     }
 
-    @Test
-    public void testQueryAuditServiceMatchUser() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testQueryAuditServiceMatchUser(AuditService auditService) {
         AuditQuery auditQuery = AuditQuery.newBuilder().withUserId("user1").build();
         Collection<AuditRecord> audits = auditService.getAudits(auditQuery);
-        Assert.assertTrue(audits.size() == 8);
+        assertTrue(audits.size() == 8);
 
         auditQuery = AuditQuery.newBuilder().withUserId("user2").build();
         audits = auditService.getAudits(auditQuery);
-        Assert.assertTrue(audits.size() == 2);
+        assertTrue(audits.size() == 2);
     }
 
-    @Test
-    public void testQueryAuditServiceMatchTimeIntervals() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testQueryAuditServiceMatchTimeIntervals(AuditService auditService) {
         AuditQuery auditQuery = AuditQuery.newBuilder().from(1546182200L).to(1546182700L).build();
         Collection<AuditRecord> audits = auditService.getAudits(auditQuery);
-        Assert.assertTrue(audits.size() == 6);
+        assertTrue(audits.size() == 6);
 
         auditQuery = AuditQuery.newBuilder().to(1546182700L).build();
         audits = auditService.getAudits(auditQuery);
-        Assert.assertTrue(audits.size() == 8);
+        assertTrue(audits.size() == 8);
 
         auditQuery = AuditQuery.newBuilder().from(1546182200L).build();
         audits = auditService.getAudits(auditQuery);
-        Assert.assertTrue(audits.size() == 8);
+        assertTrue(audits.size() == 8);
     }
 
-    @Test
-    public void testQueryAuditServiceMatchResourcePatterns() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testQueryAuditServiceMatchResourcePatterns(AuditService auditService) {
         AuditQuery auditQuery = AuditQuery.newBuilder().withResourcePattern("user1/files/*").build();
         Collection<AuditRecord> audits = auditService.getAudits(auditQuery);
-        Assert.assertTrue(audits.size() == 6);
+        assertTrue(audits.size() == 6);
 
         auditQuery = AuditQuery.newBuilder().withResourcePattern("*.txt").build();
         audits = auditService.getAudits(auditQuery);
-        Assert.assertTrue(audits.size() == 5);
+        assertTrue(audits.size() == 5);
     }
 
-    @Test
-    public void testQueryAuditServiceMatchMessagePatterns() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testQueryAuditServiceMatchMessagePatterns(AuditService auditService) {
         AuditQuery auditQuery = AuditQuery.newBuilder().withMessagePattern("ok").build();
         Collection<AuditRecord> audits = auditService.getAudits(auditQuery);
-        Assert.assertTrue(audits.size() == 6);
+        assertTrue(audits.size() == 6);
 
         auditQuery = AuditQuery.newBuilder().withMessagePattern("error.*").build();
         audits = auditService.getAudits(auditQuery);
-        Assert.assertTrue(audits.size() == 2);
+        assertTrue(audits.size() == 2);
     }
 
-    @Test
-    public void testQueryAuditServiceMatchMixed() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testQueryAuditServiceMatchMixed(AuditService auditService) {
         AuditQuery auditQuery = AuditQuery.newBuilder()
                 .withUserId("user1")
                 .withResourcePattern("user1/files/*")
                 .withMessagePattern("ok")
                 .build();
         Collection<AuditRecord> audits = auditService.getAudits(auditQuery);
-        Assert.assertTrue(audits.size() == 4);
+        assertTrue(audits.size() == 4);
     }
 
     private static void populateAudits(AuditService auditService) {

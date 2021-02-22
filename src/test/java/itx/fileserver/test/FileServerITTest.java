@@ -2,11 +2,8 @@ package itx.fileserver.test;
 
 import itx.fileserver.FileServer;
 import itx.fileserver.services.FileService;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.NamedBeanHolder;
@@ -14,6 +11,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import java.nio.file.Path;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FileServerITTest {
 
@@ -23,7 +23,7 @@ public class FileServerITTest {
     private static FileService fileService;
     private static Path basePath;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
         fileServer = new FileServer();
         fileServer.start(new String[] { "--spring.config.location=src/test/resources/application-test.yaml" });
@@ -35,17 +35,16 @@ public class FileServerITTest {
             basePath = fileService.getFileStorageInfo().getBasePath();
             LOG.info("Test basePath: {}", basePath.toString());
         } else {
-            Assert.fail();
+            fail();
         }
     }
 
-    @Test
-    @Ignore
+    //@Test
     public void testApplication() {
-        Assert.assertNotNull(fileService);
+        assertNotNull(fileService);
     }
 
-    @AfterClass
+    @AfterAll
     public static void shutdown() {
         fileServer.stop();
     }

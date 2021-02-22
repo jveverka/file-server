@@ -1,56 +1,45 @@
 package itx.fileserver.test;
 
 import itx.fileserver.services.FileUtils;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.stream.Stream;
 
-@RunWith(Parameterized.class)
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class FileUtilsTest {
 
-    @Parameterized.Parameters
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-                { "", "", true },
-                { "c.txt", "*.txt", true },
-                { "c.txt", "*.jpg", false },
-                { "a/b/c.txt", "a/b/*", true },
-                { "c.txt", "c.???", true },
-                { "c.txt", "c.????", false },
-                { "a/b/c.txt", "a/*/c.txt", true },
-                { "a/b/c.txt", "a/*/x.txt", false },
-                { "a.txt", "*", true },
-                { "data/a.txt", "*", true },
-                { "home/a.txt", "home/*", true },
-                { "home/subdir/a.txt", "home/*", true },
-                { "home/dir/subdir/a.txt", "home/*", true },
-                { "home/dir/subdir/a.txt", "home/dir/subdir/a.txt", true },
-                { "joe/data", "joe/*", true},
-                { "joe/", "joe/*", true},
-                { "joe/", "*", true},
-                { "joe/data", "*", true},
-                { "joe/data/file.txt", "*", true},
-        });
+    public static Stream<Arguments> data() {
+        return Stream.of(
+                Arguments.of( "", "", true ),
+                Arguments.of( "c.txt", "*.txt", true ),
+                Arguments.of( "c.txt", "*.jpg", false ),
+                Arguments.of( "a/b/c.txt", "a/b/*", true ),
+                Arguments.of( "c.txt", "c.???", true ),
+                Arguments.of( "c.txt", "c.????", false ),
+                Arguments.of( "a/b/c.txt", "a/*/c.txt", true ),
+                Arguments.of( "a/b/c.txt", "a/*/x.txt", false ),
+                Arguments.of( "a.txt", "*", true ),
+                Arguments.of( "data/a.txt", "*", true ),
+                Arguments.of( "home/a.txt", "home/*", true ),
+                Arguments.of( "home/subdir/a.txt", "home/*", true ),
+                Arguments.of( "home/dir/subdir/a.txt", "home/*", true ),
+                Arguments.of( "home/dir/subdir/a.txt", "home/dir/subdir/a.txt", true ),
+                Arguments.of( "joe/data", "joe/*", true ),
+                Arguments.of( "joe/", "joe/*", true ),
+                Arguments.of( "joe/", "*", true ),
+                Arguments.of( "joe/data", "*", true ),
+                Arguments.of( "joe/data/file.txt", "*", true )
+        );
     }
 
-    private final String filename;
-    private final String wildcardMatcher;
-    private final boolean expectedResult;
-
-    public FileUtilsTest(String filename, String wildcardMatcher, boolean expectedResult) {
-        this.filename = filename;
-        this.wildcardMatcher = wildcardMatcher;
-        this.expectedResult = expectedResult;
-    }
-
-    @Test
-    public void testMatcher() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testMatcher(String filename, String wildcardMatcher, boolean expectedResult) {
         boolean result = FileUtils.wildcardMatch(filename, wildcardMatcher);
-        Assert.assertTrue(result == expectedResult);
+        assertTrue(result == expectedResult);
     }
 
 }

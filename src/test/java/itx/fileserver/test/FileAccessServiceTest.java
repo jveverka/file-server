@@ -14,20 +14,19 @@ import itx.fileserver.services.data.inmemory.UserManagerServiceInmemory;
 import itx.fileserver.services.dto.RoleId;
 import itx.fileserver.services.dto.SessionId;
 import itx.fileserver.services.dto.UserData;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
-@RunWith(Parameterized.class)
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class FileAccessServiceTest {
 
     private static final SessionId authorizedSessionJoe = new SessionId("SessionJoe");
@@ -38,7 +37,7 @@ public class FileAccessServiceTest {
     private static FileAccessService fileAccessService;
     private static SecurityService securityService;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
         FileServerConfig fileServerConfig = TestUtils.createFileServerConfigForFileAccessService();
         UserManagerService userManagerService = new UserManagerServiceInmemory(fileServerConfig);
@@ -49,74 +48,63 @@ public class FileAccessServiceTest {
         Optional<UserData> authorized = null;
 
         authorized = securityService.authorize(authorizedSessionJoe, "joe", validPassword);
-        Assert.assertTrue(authorized.isPresent());
+        assertTrue(authorized.isPresent());
         authorized = securityService.authorize(authorizedSessionJane, "jane", validPassword);
-        Assert.assertTrue(authorized.isPresent());
+        assertTrue(authorized.isPresent());
         authorized = securityService.authorize(authorizedSessionPublic, "public", validPassword);
-        Assert.assertTrue(authorized.isPresent());
+        assertTrue(authorized.isPresent());
     }
 
-    @Parameterized.Parameters
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-                { authorizedSessionJoe, "joe/data", true, true },
-                { authorizedSessionJoe, "joe/data.txt", true, true },
-                { authorizedSessionJoe, "jane/data.txt", false, false },
+    public static Stream<Arguments> data() {
+        return Stream.of(
+                Arguments.of( authorizedSessionJoe, "joe/data", true, true ),
+                Arguments.of( authorizedSessionJoe, "joe/data.txt", true, true ),
+                Arguments.of( authorizedSessionJoe, "jane/data.txt", false, false ),
 
-                { authorizedSessionJoe, "secret.pdf", false, false },
-                { authorizedSessionJane, "secret.pdf", false, false },
-                { authorizedSessionPublic, "secret.pdf", false, false },
+                Arguments.of( authorizedSessionJoe, "secret.pdf", false, false ),
+                Arguments.of( authorizedSessionJane, "secret.pdf", false, false ),
+                Arguments.of( authorizedSessionPublic, "secret.pdf", false, false ),
 
-                { authorizedSessionJane, "jane/data", true, true },
-                { authorizedSessionJane, "jane/data.txt", true, true },
-                { authorizedSessionJane, "jane/nested/data.txt", true, true },
+                Arguments.of( authorizedSessionJane, "jane/data", true, true ),
+                Arguments.of( authorizedSessionJane, "jane/data.txt", true, true ),
+                Arguments.of( authorizedSessionJane, "jane/nested/data.txt", true, true ),
 
-                { authorizedSessionJane, "joe/for-jane/data", true, true },
-                { authorizedSessionJane, "joe/for-jane/data.txt", true, true },
-                { authorizedSessionJane, "joe/for-public/data.txt", true, false },
-                { authorizedSessionJane, "joe/data.txt", false, false },
+                Arguments.of( authorizedSessionJane, "joe/for-jane/data", true, true ),
+                Arguments.of( authorizedSessionJane, "joe/for-jane/data.txt", true, true ),
+                Arguments.of( authorizedSessionJane, "joe/for-public/data.txt", true, false ),
+                Arguments.of( authorizedSessionJane, "joe/data.txt", false, false ),
 
-                { authorizedSessionJoe, "public/data", true, true },
-                { authorizedSessionJoe, "public/readonly", true, true },
-                { authorizedSessionJoe, "public/readonly/image.jpg", true, false },
+                Arguments.of( authorizedSessionJoe, "public/data", true, true ),
+                Arguments.of( authorizedSessionJoe, "public/readonly", true, true ),
+                Arguments.of( authorizedSessionJoe, "public/readonly/image.jpg", true, false ),
 
-                { authorizedSessionJane, "public/data", true, true },
-                { authorizedSessionJane, "public/readonly", true, true },
-                { authorizedSessionJane, "public/readonly/image.jpg", true, false },
+                Arguments.of( authorizedSessionJane, "public/data", true, true ),
+                Arguments.of( authorizedSessionJane, "public/readonly", true, true ),
+                Arguments.of( authorizedSessionJane, "public/readonly/image.jpg", true, false ),
 
-                { authorizedSessionPublic, "public/data", true, true },
-                { authorizedSessionPublic, "public/readonly", true, true },
-                { authorizedSessionPublic, "public/readonly/image.jpg", true, false },
-                { authorizedSessionPublic, "public/readonly/subdir/image.jpg", true, false },
-        });
+                Arguments.of( authorizedSessionPublic, "public/data", true, true ),
+                Arguments.of( authorizedSessionPublic, "public/readonly", true, true ),
+                Arguments.of( authorizedSessionPublic, "public/readonly/image.jpg", true, false ),
+                Arguments.of( authorizedSessionPublic, "public/readonly/subdir/image.jpg", true, false )
+        );
     }
 
-    private SessionId sessionId;
-    private String path;
-    boolean expectedCanRead;
-    private boolean expectedCanReadAndWrite;
-
-    public FileAccessServiceTest(SessionId sessionId, String path, boolean expectedCanRead, boolean expectedCanReadAndWrite) {
-        this.sessionId = sessionId;
-        this.path = path;
-        this.expectedCanRead = expectedCanRead;
-        this.expectedCanReadAndWrite = expectedCanReadAndWrite;
-    }
-
-    @Test
-    public void testReadAccess() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testReadAccess(SessionId sessionId, String path, boolean expectedCanRead, boolean expectedCanReadAndWrite) {
         Optional<Set<RoleId>> roles = securityService.getRoles(sessionId);
         Path p = Paths.get(path);
         boolean canRead = fileAccessService.canRead(roles.get(), p);
-        Assert.assertTrue(canRead == expectedCanRead);
+        assertTrue(canRead == expectedCanRead);
     }
 
-    @Test
-    public void testWriteAccess() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testWriteAccess(SessionId sessionId, String path, boolean expectedCanRead, boolean expectedCanReadAndWrite) {
         Optional<Set<RoleId>> roles = securityService.getRoles(sessionId);
         Path p = Paths.get(path);
         boolean canReadAndWrite = fileAccessService.canReadAndWrite(roles.get(), p);
-        Assert.assertTrue(canReadAndWrite == expectedCanReadAndWrite);
+        assertTrue(canReadAndWrite == expectedCanReadAndWrite);
     }
 
 }
