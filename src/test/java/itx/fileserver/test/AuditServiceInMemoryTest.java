@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import static itx.fileserver.services.dto.AuditConstants.USER_ACCESS;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AuditServiceInMemoryTest {
 
@@ -18,33 +18,33 @@ class AuditServiceInMemoryTest {
     void testInMemotyRolingBuffer() {
         AuditService auditService = new AuditServiceInmemory(3);
         Collection<AuditRecord> audits = auditService.getAudits(AuditQuery.MATCH_ALL);
-        assertTrue(audits.size() == 0);
+        assertEquals(0, audits.size());
 
         auditService.storeAudit(new AuditRecord(1546182100L, USER_ACCESS.NAME, USER_ACCESS.LOGIN, "user1", "", "login ok", null));
         auditService.storeAudit(new AuditRecord(1546182200L, USER_ACCESS.NAME, USER_ACCESS.LOGIN, "user1", "", "login ok", null));
         auditService.storeAudit(new AuditRecord(1546182300L, USER_ACCESS.NAME, USER_ACCESS.LOGIN, "user1", "", "login ok", null));
 
         audits = auditService.getAudits(AuditQuery.MATCH_ALL);
-        assertTrue(audits.size() == 3);
+        assertEquals(3, audits.size());
         Iterator<AuditRecord> iterator = audits.iterator();
         AuditRecord auditRecord = iterator.next();
-        assertTrue(auditRecord.getTimestamp() == 1546182300L);
+        assertEquals(1546182300L, auditRecord.getTimestamp());
         auditRecord = iterator.next();
-        assertTrue(auditRecord.getTimestamp() == 1546182200L);
+        assertEquals(1546182200L, auditRecord.getTimestamp());
         auditRecord = iterator.next();
-        assertTrue(auditRecord.getTimestamp() == 1546182100L);
+        assertEquals(1546182100L, auditRecord.getTimestamp());
 
         auditService.storeAudit(new AuditRecord(1546182400L, USER_ACCESS.NAME, USER_ACCESS.LOGIN, "user1", "", "login ok", null));
 
         audits = auditService.getAudits(AuditQuery.MATCH_ALL);
-        assertTrue(audits.size() == 3);
+        assertEquals(3, audits.size());
         iterator = audits.iterator();
         auditRecord = iterator.next();
-        assertTrue(auditRecord.getTimestamp() == 1546182400L);
+        assertEquals(1546182400L, auditRecord.getTimestamp());
         auditRecord = iterator.next();
-        assertTrue(auditRecord.getTimestamp() == 1546182300L);
+        assertEquals(1546182300L, auditRecord.getTimestamp());
         auditRecord = iterator.next();
-        assertTrue(auditRecord.getTimestamp() == 1546182200L);
+        assertEquals(1546182200L, auditRecord.getTimestamp());
     }
 
 }
