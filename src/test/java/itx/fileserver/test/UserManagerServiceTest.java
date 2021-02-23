@@ -19,11 +19,12 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class UserManagerServiceTest {
+class UserManagerServiceTest {
 
     public static Stream<Arguments> data() {
         return Stream.of(
@@ -35,20 +36,20 @@ public class UserManagerServiceTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void userManagerServiceTest(UserManagerService userManagerService) {
+    void userManagerServiceTest(UserManagerService userManagerService) {
         UserId masterUserId = new UserId("master");
         UserId newUserId = new UserId("newUser");
 
-        assertTrue(userManagerService.getUsers().size() == 4);
+        assertEquals(4, userManagerService.getUsers().size());
         Optional<UserData> userData = userManagerService.getUser(masterUserId);
         assertTrue(userData.isPresent());
         userManagerService.removeUser(masterUserId);
         userData = userManagerService.getUser(masterUserId);
         assertFalse(userData.isPresent());
-        assertTrue(userManagerService.getUsers().size() == 3);
+        assertEquals(3, userManagerService.getUsers().size());
         UserData newUser = new UserData(newUserId, new RoleId("newUser"), "secret");
         userManagerService.addUser(newUser);
-        assertTrue(userManagerService.getUsers().size() == 4);
+        assertEquals(4, userManagerService.getUsers().size());
         userData = userManagerService.getUser(newUserId);
         assertTrue(userData.isPresent());
     }
