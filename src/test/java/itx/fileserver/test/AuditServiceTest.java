@@ -17,9 +17,10 @@ import java.util.stream.Stream;
 
 import static itx.fileserver.services.dto.AuditConstants.FILE_ACCESS;
 import static itx.fileserver.services.dto.AuditConstants.USER_ACCESS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AuditServiceTest {
+class AuditServiceTest {
 
     public static Stream<Arguments> data() {
         return Stream.of(
@@ -30,101 +31,101 @@ public class AuditServiceTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testQueryAuditServiceMatchAll(AuditService auditService) {
+    void testQueryAuditServiceMatchAll(AuditService auditService) {
         Collection<AuditRecord> audits = auditService.getAudits(AuditQuery.MATCH_ALL);
-        assertTrue(audits.size() == 10);
+        assertEquals(10, audits.size());
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testQueryAuditServiceMatchCategory(AuditService auditService) {
+    void testQueryAuditServiceMatchCategory(AuditService auditService) {
         AuditQuery auditQuery = AuditQuery.newBuilder().withCategory(USER_ACCESS.NAME).build();
         Collection<AuditRecord> audits = auditService.getAudits(auditQuery);
-        assertTrue(audits.size() == 2);
+        assertEquals(2, audits.size());
 
         auditQuery = AuditQuery.newBuilder().withCategory(FILE_ACCESS.NAME).build();
         audits = auditService.getAudits(auditQuery);
-        assertTrue(audits.size() == 8);
+        assertEquals(8, audits.size());
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testQueryAuditServiceMatchAction(AuditService auditService) {
+    void testQueryAuditServiceMatchAction(AuditService auditService) {
         AuditQuery auditQuery = AuditQuery.newBuilder().withAction(USER_ACCESS.LOGIN).build();
         Collection<AuditRecord> audits = auditService.getAudits(auditQuery);
-        assertTrue(audits.size() == 1);
+        assertEquals(1, audits.size());
 
         auditQuery = AuditQuery.newBuilder().withAction(FILE_ACCESS.DOWNLOAD).build();
         audits = auditService.getAudits(auditQuery);
-        assertTrue(audits.size() == 2);
+        assertEquals(2, audits.size());
 
         auditQuery = AuditQuery.newBuilder().withAction(FILE_ACCESS.LIST_DIR).build();
         audits = auditService.getAudits(auditQuery);
-        assertTrue(audits.size() == 3);
+        assertEquals(3, audits.size());
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testQueryAuditServiceMatchUser(AuditService auditService) {
+    void testQueryAuditServiceMatchUser(AuditService auditService) {
         AuditQuery auditQuery = AuditQuery.newBuilder().withUserId("user1").build();
         Collection<AuditRecord> audits = auditService.getAudits(auditQuery);
-        assertTrue(audits.size() == 8);
+        assertEquals(8, audits.size());
 
         auditQuery = AuditQuery.newBuilder().withUserId("user2").build();
         audits = auditService.getAudits(auditQuery);
-        assertTrue(audits.size() == 2);
+        assertEquals(2, audits.size());
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testQueryAuditServiceMatchTimeIntervals(AuditService auditService) {
+    void testQueryAuditServiceMatchTimeIntervals(AuditService auditService) {
         AuditQuery auditQuery = AuditQuery.newBuilder().from(1546182200L).to(1546182700L).build();
         Collection<AuditRecord> audits = auditService.getAudits(auditQuery);
-        assertTrue(audits.size() == 6);
+        assertEquals(6, audits.size());
 
         auditQuery = AuditQuery.newBuilder().to(1546182700L).build();
         audits = auditService.getAudits(auditQuery);
-        assertTrue(audits.size() == 8);
+        assertEquals(8, audits.size());
 
         auditQuery = AuditQuery.newBuilder().from(1546182200L).build();
         audits = auditService.getAudits(auditQuery);
-        assertTrue(audits.size() == 8);
+        assertEquals(8, audits.size());
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testQueryAuditServiceMatchResourcePatterns(AuditService auditService) {
+    void testQueryAuditServiceMatchResourcePatterns(AuditService auditService) {
         AuditQuery auditQuery = AuditQuery.newBuilder().withResourcePattern("user1/files/*").build();
         Collection<AuditRecord> audits = auditService.getAudits(auditQuery);
-        assertTrue(audits.size() == 6);
+        assertEquals(6, audits.size());
 
         auditQuery = AuditQuery.newBuilder().withResourcePattern("*.txt").build();
         audits = auditService.getAudits(auditQuery);
-        assertTrue(audits.size() == 5);
+        assertEquals(5, audits.size());
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testQueryAuditServiceMatchMessagePatterns(AuditService auditService) {
+    void testQueryAuditServiceMatchMessagePatterns(AuditService auditService) {
         AuditQuery auditQuery = AuditQuery.newBuilder().withMessagePattern("ok").build();
         Collection<AuditRecord> audits = auditService.getAudits(auditQuery);
-        assertTrue(audits.size() == 6);
+        assertEquals(6, audits.size());
 
         auditQuery = AuditQuery.newBuilder().withMessagePattern("error.*").build();
         audits = auditService.getAudits(auditQuery);
-        assertTrue(audits.size() == 2);
+        assertEquals(2, audits.size());
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testQueryAuditServiceMatchMixed(AuditService auditService) {
+    void testQueryAuditServiceMatchMixed(AuditService auditService) {
         AuditQuery auditQuery = AuditQuery.newBuilder()
                 .withUserId("user1")
                 .withResourcePattern("user1/files/*")
                 .withMessagePattern("ok")
                 .build();
         Collection<AuditRecord> audits = auditService.getAudits(auditQuery);
-        assertTrue(audits.size() == 4);
+        assertEquals(4, audits.size());
     }
 
     private static void populateAudits(AuditService auditService) {
