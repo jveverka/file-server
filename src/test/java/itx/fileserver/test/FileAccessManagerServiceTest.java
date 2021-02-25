@@ -17,10 +17,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class FileAccessManagerServiceTest {
+class FileAccessManagerServiceTest {
 
     public static Stream<Arguments> data() {
         return Stream.of(
@@ -31,31 +32,31 @@ public class FileAccessManagerServiceTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void fileAccessManagerServiceTest(FileAccessManagerService fileAccessManagerService) {
+    void fileAccessManagerServiceTest(FileAccessManagerService fileAccessManagerService) {
         FilterConfig filterToRemove01 = new FilterConfig("public/readonly/*", "READ", "public");
         FilterConfig filterToRemove02 = new FilterConfig("joe/for-public/*", "READ", "public");
         FilterConfig filterToRemove03 = new FilterConfig("public/*", "READ_WRITE", "public");
         FilterConfig filterToAdd = new FilterConfig("public-dir/*", "READ_WRITE", "public");
         RoleId publicRoleId = new RoleId("public");
 
-        assertTrue(fileAccessManagerService.getFilters().size() == 8);
-        assertTrue(fileAccessManagerService.getFilters(publicRoleId).size() == 3);
+        assertEquals(8, fileAccessManagerService.getFilters().size());
+        assertEquals(3, fileAccessManagerService.getFilters(publicRoleId).size());
 
         fileAccessManagerService.removeFilter(filterToRemove01);
-        assertTrue(fileAccessManagerService.getFilters().size() == 7);
-        assertTrue(fileAccessManagerService.getFilters(publicRoleId).size() == 2);
+        assertEquals(7, fileAccessManagerService.getFilters().size());
+        assertEquals(2, fileAccessManagerService.getFilters(publicRoleId).size());
 
         fileAccessManagerService.removeFilter(filterToRemove02);
-        assertTrue(fileAccessManagerService.getFilters().size() == 6);
-        assertTrue(fileAccessManagerService.getFilters(publicRoleId).size() == 1);
+        assertEquals(6, fileAccessManagerService.getFilters().size());
+        assertEquals(1, fileAccessManagerService.getFilters(publicRoleId).size());
 
         fileAccessManagerService.removeFilter(filterToRemove03);
-        assertTrue(fileAccessManagerService.getFilters().size() == 5);
-        assertTrue(fileAccessManagerService.getFilters(publicRoleId).size() == 0);
+        assertEquals(5, fileAccessManagerService.getFilters().size());
+        assertEquals(0, fileAccessManagerService.getFilters(publicRoleId).size());
 
         fileAccessManagerService.addFilter(filterToAdd);
-        assertTrue(fileAccessManagerService.getFilters().size() == 6);
-        assertTrue(fileAccessManagerService.getFilters(publicRoleId).size() == 1);
+        assertEquals(6, fileAccessManagerService.getFilters().size());
+        assertEquals(1, fileAccessManagerService.getFilters(publicRoleId).size());
     }
 
     private static FileAccessManagerService createInmemoryFileAccessManagerService() {
