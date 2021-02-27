@@ -7,9 +7,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FileUtilsTest {
+
+class FileUtilsTest {
 
     public static Stream<Arguments> data() {
         return Stream.of(
@@ -37,9 +38,9 @@ public class FileUtilsTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testMatcher(String filename, String wildcardMatcher, boolean expectedResult) {
+    void testMatcher(String filename, String wildcardMatcher, boolean expectedResult) {
         boolean result = FileUtils.wildcardMatch(filename, wildcardMatcher);
-        assertTrue(result == expectedResult);
+        assertEquals(expectedResult, result);
     }
 
 }

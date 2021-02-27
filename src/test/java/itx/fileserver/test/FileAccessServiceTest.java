@@ -25,9 +25,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FileAccessServiceTest {
+class FileAccessServiceTest {
 
     private static final SessionId authorizedSessionJoe = new SessionId("SessionJoe");
     private static final SessionId authorizedSessionJane = new SessionId("SessionJane");
@@ -91,20 +92,20 @@ public class FileAccessServiceTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testReadAccess(SessionId sessionId, String path, boolean expectedCanRead, boolean expectedCanReadAndWrite) {
+    void testReadAccess(SessionId sessionId, String path, boolean expectedCanRead, boolean expectedCanReadAndWrite) {
         Optional<Set<RoleId>> roles = securityService.getRoles(sessionId);
         Path p = Paths.get(path);
         boolean canRead = fileAccessService.canRead(roles.get(), p);
-        assertTrue(canRead == expectedCanRead);
+        assertEquals(canRead, expectedCanRead);
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testWriteAccess(SessionId sessionId, String path, boolean expectedCanRead, boolean expectedCanReadAndWrite) {
+    void testWriteAccess(SessionId sessionId, String path, boolean expectedCanRead, boolean expectedCanReadAndWrite) {
         Optional<Set<RoleId>> roles = securityService.getRoles(sessionId);
         Path p = Paths.get(path);
         boolean canReadAndWrite = fileAccessService.canReadAndWrite(roles.get(), p);
-        assertTrue(canReadAndWrite == expectedCanReadAndWrite);
+        assertEquals(canReadAndWrite, expectedCanReadAndWrite);
     }
 
 }
