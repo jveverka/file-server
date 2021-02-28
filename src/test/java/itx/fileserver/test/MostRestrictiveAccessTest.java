@@ -10,9 +10,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MostRestrictiveAccessTest {
+class MostRestrictiveAccessTest {
 
     public static Stream<Arguments> data() {
         return Stream.of(
@@ -42,9 +42,9 @@ public class MostRestrictiveAccessTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void accessTest(Set<AccessType> accessTypes, AccessType actualAccessType, boolean expectedResult) {
+    void accessTest(Set<AccessType> accessTypes, AccessType actualAccessType, boolean expectedResult) {
         boolean result = FileAccessServiceImpl.checkAccessUseMostRestrictive(accessTypes, actualAccessType);
-        assertTrue(expectedResult == result);
+        assertEquals(expectedResult, result);
     }
 
 }
