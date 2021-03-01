@@ -1,6 +1,6 @@
 package itx.fileserver.config;
 
-import itx.fileserver.rest.AdminFilter;
+import itx.fileserver.controler.AdminFilter;
 import itx.fileserver.services.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

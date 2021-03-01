@@ -1,4 +1,4 @@
-package itx.fileserver.rest;
+package itx.fileserver.controler;
 
 import itx.fileserver.config.dto.UserConfig;
 import itx.fileserver.services.FileService;
