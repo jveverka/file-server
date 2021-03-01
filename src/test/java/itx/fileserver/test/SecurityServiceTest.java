@@ -16,11 +16,12 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SecurityServiceTest {
+class SecurityServiceTest {
 
     private static final SessionId authorizedSessionJoe = new SessionId("SessionJoe");
     private static final SessionId authorizedSessionJane = new SessionId("SessionJane");
@@ -31,7 +32,7 @@ public class SecurityServiceTest {
     private static final String invalidPassword = "xxxx";
 
     @Test
-    public void testValidLoginAndSession() {
+    void testValidLoginAndSession() {
         FileServerConfig fileServerConfig = TestUtils.createFileServerConfigForSecurityService();
         UserManagerService userManagerService = new UserManagerServiceInmemory(fileServerConfig);
         AuditService auditService = new AuditServiceInmemory(1024);
@@ -41,9 +42,9 @@ public class SecurityServiceTest {
         Sessions activeSessions = null;
 
         activeSessions = securityService.getActiveSessions();
-        assertTrue(activeSessions.getAnonymousSessions().size() == 0);
-        assertTrue(activeSessions.getUserSessions().size() == 0);
-        assertTrue(activeSessions.getAdminSessions().size() == 0);
+        assertEquals(0, activeSessions.getAnonymousSessions().size());
+        assertEquals(0, activeSessions.getUserSessions().size());
+        assertEquals(0, activeSessions.getAdminSessions().size());
 
         //login session 1
         authorized = securityService.authorize(authorizedSessionJoe, "joe", validPassword);
@@ -64,9 +65,9 @@ public class SecurityServiceTest {
         assertTrue(authorized.isPresent());
 
         activeSessions = securityService.getActiveSessions();
-        assertTrue(activeSessions.getAnonymousSessions().size() == 0);
-        assertTrue(activeSessions.getUserSessions().size() == 2);
-        assertTrue(activeSessions.getAdminSessions().size() == 0);
+        assertEquals(0, activeSessions.getAnonymousSessions().size());
+        assertEquals(2, activeSessions.getUserSessions().size());
+        assertEquals(0, activeSessions.getAdminSessions().size());
 
         //logout both sessions
         securityService.terminateSession(authorizedSessionJoe);
@@ -81,14 +82,14 @@ public class SecurityServiceTest {
         assertFalse(authorized.isPresent());
 
         activeSessions = securityService.getActiveSessions();
-        assertTrue(activeSessions.getAnonymousSessions().size() == 0);
-        assertTrue(activeSessions.getUserSessions().size() == 0);
-        assertTrue(activeSessions.getAdminSessions().size() == 0);
+        assertEquals(0, activeSessions.getAnonymousSessions().size());
+        assertEquals(0, activeSessions.getUserSessions().size());
+        assertEquals(0, activeSessions.getAdminSessions().size());
 
     }
 
     @Test
-    public void testInvalidSession() {
+    void testInvalidSession() {
         FileServerConfig fileServerConfig = TestUtils.createFileServerConfigForSecurityService();
         UserManagerService userManagerService = new UserManagerServiceInmemory(fileServerConfig);
         AuditService auditService = new AuditServiceInmemory(1024);
@@ -103,13 +104,13 @@ public class SecurityServiceTest {
         assertFalse(authorized.isPresent());
 
         activeSessions = securityService.getActiveSessions();
-        assertTrue(activeSessions.getAnonymousSessions().size() == 0);
-        assertTrue(activeSessions.getUserSessions().size() == 0);
-        assertTrue(activeSessions.getAdminSessions().size() == 0);
+        assertEquals(0, activeSessions.getAnonymousSessions().size());
+        assertEquals(0, activeSessions.getUserSessions().size());
+        assertEquals(0, activeSessions.getAdminSessions().size());
     }
 
     @Test
-    public void testInvalidLogin() {
+    void testInvalidLogin() {
         FileServerConfig fileServerConfig = TestUtils.createFileServerConfigForSecurityService();
         UserManagerService userManagerService = new UserManagerServiceInmemory(fileServerConfig);
         AuditService auditService = new AuditServiceInmemory(1024);
@@ -133,7 +134,7 @@ public class SecurityServiceTest {
     }
 
     @Test
-    public void testAnonymousSession() {
+    void testAnonymousSession() {
         FileServerConfig fileServerConfig = TestUtils.createFileServerConfigForSecurityService();
         UserManagerService userManagerService = new UserManagerServiceInmemory(fileServerConfig);
         AuditService auditService = new AuditServiceInmemory(1024);
@@ -167,9 +168,9 @@ public class SecurityServiceTest {
         assertFalse(securityService.isAuthorizedAdmin(anonymousSession));
 
         activeSessions = securityService.getActiveSessions();
-        assertTrue(activeSessions.getAnonymousSessions().size() == 1);
-        assertTrue(activeSessions.getUserSessions().size() == 1);
-        assertTrue(activeSessions.getAdminSessions().size() == 0);
+        assertEquals(1, activeSessions.getAnonymousSessions().size());
+        assertEquals(1, activeSessions.getUserSessions().size());
+        assertEquals(0, activeSessions.getAdminSessions().size());
 
         //terminate both sessions
         securityService.terminateSession(authorizedSessionJane);
@@ -187,7 +188,7 @@ public class SecurityServiceTest {
     }
 
     @Test
-    public void testAdminSession() {
+    void testAdminSession() {
         FileServerConfig fileServerConfig = TestUtils.createFileServerConfigForSecurityService();
         UserManagerService userManagerService = new UserManagerServiceInmemory(fileServerConfig);
         AuditService auditService = new AuditServiceInmemory(1024);
@@ -224,9 +225,9 @@ public class SecurityServiceTest {
         assertTrue(securityService.isAuthorizedAdmin(authorizedSessionAdmin));
 
         activeSessions = securityService.getActiveSessions();
-        assertTrue(activeSessions.getAnonymousSessions().size() == 0);
-        assertTrue(activeSessions.getUserSessions().size() == 1);
-        assertTrue(activeSessions.getAdminSessions().size() == 1);
+        assertEquals(0, activeSessions.getAnonymousSessions().size());
+        assertEquals(1, activeSessions.getUserSessions().size());
+        assertEquals(1, activeSessions.getAdminSessions().size());
 
         //terminate both sessions
         securityService.terminateSession(authorizedSessionJane);
