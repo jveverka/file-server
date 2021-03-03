@@ -3,9 +3,11 @@ package itx.fileserver.test;
 import itx.fileserver.config.FileServerConfig;
 import itx.fileserver.services.dto.FilterConfig;
 import itx.fileserver.config.dto.UserConfig;
+import org.springframework.http.HttpHeaders;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public final class TestUtils {
 
@@ -39,6 +41,25 @@ public final class TestUtils {
         FileServerConfig fileServerConfig = createFileServerConfigForSecurityService();
         fileServerConfig.setFilters(filters);
         return fileServerConfig;
+    }
+
+    public static Optional<String> getJSessionId(String cookies) {
+        String[] split = cookies.split(";");
+        for (int i=0; i<split.length; i++) {
+            if (split[i].startsWith("JSESSIONID=")) {
+                String[] jSplit = split[i].split("=");
+                if (jSplit.length > 1) {
+                    return Optional.of(jSplit[1]);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    public static HttpHeaders createHeaders(String jSessionId) {
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.add("Cookie", "JSESSIONID=" + jSessionId);
+        return requestHeaders;
     }
 
 }

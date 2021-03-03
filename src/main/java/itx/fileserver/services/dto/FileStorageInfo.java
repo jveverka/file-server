@@ -1,5 +1,8 @@
 package itx.fileserver.services.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.nio.file.Path;
 
 public class FileStorageInfo {
@@ -8,7 +11,10 @@ public class FileStorageInfo {
     private final long bytesFree;
     private final long bytesTotal;
 
-    public FileStorageInfo(Path basePath, long bytesFree, long bytesTotal) {
+    @JsonCreator
+    public FileStorageInfo(@JsonProperty("basePath") Path basePath,
+                           @JsonProperty("bytesFree") long bytesFree,
+                           @JsonProperty("bytesTotal") long bytesTotal) {
         this.basePath = basePath;
         this.bytesFree = bytesFree;
         this.bytesTotal = bytesTotal;

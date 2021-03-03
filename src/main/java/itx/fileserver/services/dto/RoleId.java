@@ -1,12 +1,16 @@
 package itx.fileserver.services.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
 public class RoleId {
 
     private final String id;
 
-    public RoleId(String id) {
+    @JsonCreator
+    public RoleId(@JsonProperty("id") String id) {
         this.id = id;
     }
 
