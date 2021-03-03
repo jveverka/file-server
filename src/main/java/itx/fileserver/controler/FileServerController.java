@@ -1,6 +1,6 @@
 package itx.fileserver.controler;
 
-import itx.fileserver.controler.dto.MoveRequest;
+import itx.fileserver.dto.MoveRequest;
 import itx.fileserver.services.FileService;
 import itx.fileserver.services.OperationNotAllowedException;
 import itx.fileserver.services.SecurityService;

@@ -1,7 +1,7 @@
 package itx.fileserver.config;
 
 import itx.fileserver.services.dto.FilterConfig;
-import itx.fileserver.config.dto.UserConfig;
+import itx.fileserver.dto.UserConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

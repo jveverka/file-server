@@ -1,6 +1,6 @@
 package itx.fileserver.controler;
 
-import itx.fileserver.config.dto.UserConfig;
+import itx.fileserver.dto.UserConfig;
 import itx.fileserver.services.FileService;
 import itx.fileserver.services.SecurityService;
 import itx.fileserver.services.data.AuditService;

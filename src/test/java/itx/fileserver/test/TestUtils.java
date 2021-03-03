@@ -2,7 +2,7 @@ package itx.fileserver.test;
 
 import itx.fileserver.config.FileServerConfig;
 import itx.fileserver.services.dto.FilterConfig;
-import itx.fileserver.config.dto.UserConfig;
+import itx.fileserver.dto.UserConfig;
 import org.springframework.http.HttpHeaders;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package itx.fileserver.controler.dto;
+package itx.fileserver.dto;
 
 public class MoveRequest {
 

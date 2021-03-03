@@ -1,4 +1,4 @@
-package itx.fileserver.config.dto;
+package itx.fileserver.dto;
 
 import java.util.Arrays;
 import java.util.List;

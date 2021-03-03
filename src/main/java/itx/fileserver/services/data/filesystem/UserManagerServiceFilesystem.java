@@ -1,6 +1,6 @@
 package itx.fileserver.services.data.filesystem;
 
-import itx.fileserver.config.dto.UserConfig;
+import itx.fileserver.dto.UserConfig;
 import itx.fileserver.services.data.base.UserManagerServiceImpl;
 import itx.fileserver.services.data.filesystem.dto.UserManagerData;
 import itx.fileserver.services.dto.RoleId;
