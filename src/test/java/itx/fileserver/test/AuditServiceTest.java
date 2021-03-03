@@ -18,7 +18,6 @@ import java.util.stream.Stream;
 import static itx.fileserver.services.dto.AuditConstants.FILE_ACCESS;
 import static itx.fileserver.services.dto.AuditConstants.USER_ACCESS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AuditServiceTest {
 
