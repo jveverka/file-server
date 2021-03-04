@@ -1,8 +1,8 @@
 package itx.fileserver.test;
 
-import itx.fileserver.services.dto.FileStorageInfo;
-import itx.fileserver.services.dto.LoginRequest;
-import itx.fileserver.services.dto.UserData;
+import itx.fileserver.dto.FileStorageInfo;
+import itx.fileserver.dto.LoginRequest;
+import itx.fileserver.dto.UserData;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;

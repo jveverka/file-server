@@ -1,9 +1,9 @@
 package itx.fileserver.controler;
 
 import itx.fileserver.services.SecurityService;
-import itx.fileserver.services.dto.LoginRequest;
-import itx.fileserver.services.dto.SessionId;
-import itx.fileserver.services.dto.UserData;
+import itx.fileserver.dto.LoginRequest;
+import itx.fileserver.dto.SessionId;
+import itx.fileserver.dto.UserData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

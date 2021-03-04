@@ -1,8 +1,8 @@
 package itx.fileserver.services.data;
 
-import itx.fileserver.services.dto.FileAccessFilter;
-import itx.fileserver.services.dto.FilterConfig;
-import itx.fileserver.services.dto.RoleId;
+import itx.fileserver.dto.FileAccessFilter;
+import itx.fileserver.dto.FilterConfig;
+import itx.fileserver.dto.RoleId;
 
 import java.util.Collection;
 

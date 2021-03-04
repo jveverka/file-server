@@ -1,16 +1,12 @@
-package itx.fileserver.services.dto;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+package itx.fileserver.dto;
 
 import java.util.Objects;
 
-public class UserId {
+public class SessionId {
 
     private final String id;
 
-    @JsonCreator
-    public UserId(@JsonProperty("id") String id) {
+    public SessionId(String id) {
         this.id = id;
     }
 
@@ -22,8 +18,8 @@ public class UserId {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserId userId = (UserId) o;
-        return Objects.equals(id, userId.id);
+        SessionId sessionId = (SessionId) o;
+        return Objects.equals(id, sessionId.id);
     }
 
     @Override

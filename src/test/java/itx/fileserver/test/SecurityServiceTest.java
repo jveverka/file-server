@@ -7,10 +7,10 @@ import itx.fileserver.services.data.AuditService;
 import itx.fileserver.services.data.UserManagerService;
 import itx.fileserver.services.data.inmemory.AuditServiceInmemory;
 import itx.fileserver.services.data.inmemory.UserManagerServiceInmemory;
-import itx.fileserver.services.dto.RoleId;
-import itx.fileserver.services.dto.SessionId;
-import itx.fileserver.services.dto.Sessions;
-import itx.fileserver.services.dto.UserData;
+import itx.fileserver.dto.RoleId;
+import itx.fileserver.dto.SessionId;
+import itx.fileserver.dto.Sessions;
+import itx.fileserver.dto.UserData;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;

@@ -1,7 +1,7 @@
 package itx.fileserver.config;
 
 import itx.fileserver.services.SecurityService;
-import itx.fileserver.services.dto.SessionId;
+import itx.fileserver.dto.SessionId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;

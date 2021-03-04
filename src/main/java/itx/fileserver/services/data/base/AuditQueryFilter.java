@@ -1,8 +1,8 @@
 package itx.fileserver.services.data.base;
 
 import itx.fileserver.services.FileUtils;
-import itx.fileserver.services.dto.AuditQuery;
-import itx.fileserver.services.dto.AuditRecord;
+import itx.fileserver.dto.AuditQuery;
+import itx.fileserver.dto.AuditRecord;
 
 import java.util.function.Predicate;
 

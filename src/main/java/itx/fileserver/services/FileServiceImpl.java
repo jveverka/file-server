@@ -2,14 +2,14 @@ package itx.fileserver.services;
 
 import itx.fileserver.config.FileServerConfig;
 import itx.fileserver.services.data.AuditService;
-import itx.fileserver.services.dto.AuditQuery;
-import itx.fileserver.services.dto.AuditRecord;
-import itx.fileserver.services.dto.DirectoryInfo;
-import itx.fileserver.services.dto.FileInfo;
-import itx.fileserver.services.dto.FileList;
-import itx.fileserver.services.dto.FileStorageInfo;
-import itx.fileserver.services.dto.ResourceAccessInfo;
-import itx.fileserver.services.dto.UserData;
+import itx.fileserver.dto.AuditQuery;
+import itx.fileserver.dto.AuditRecord;
+import itx.fileserver.dto.DirectoryInfo;
+import itx.fileserver.dto.FileInfo;
+import itx.fileserver.dto.FileList;
+import itx.fileserver.dto.FileStorageInfo;
+import itx.fileserver.dto.ResourceAccessInfo;
+import itx.fileserver.dto.UserData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-import static itx.fileserver.services.dto.AuditConstants.FILE_ACCESS;
+import static itx.fileserver.dto.AuditConstants.FILE_ACCESS;
 
 @Service
 public class FileServiceImpl implements FileService {

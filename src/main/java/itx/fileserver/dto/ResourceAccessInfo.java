@@ -1,4 +1,4 @@
-package itx.fileserver.services.dto;
+package itx.fileserver.dto;
 
 import java.util.HashMap;
 import java.util.Map;

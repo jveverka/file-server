@@ -1,7 +1,7 @@
 package itx.fileserver.test;
 
 import itx.fileserver.services.FileAccessServiceImpl;
-import itx.fileserver.services.dto.AccessType;
+import itx.fileserver.dto.AccessType;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;

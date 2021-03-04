@@ -1,6 +1,6 @@
 package itx.fileserver.services;
 
-import itx.fileserver.services.dto.RoleId;
+import itx.fileserver.dto.RoleId;
 
 import java.nio.file.Path;
 import java.util.Set;

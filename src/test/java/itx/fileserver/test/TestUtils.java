@@ -1,7 +1,7 @@
 package itx.fileserver.test;
 
 import itx.fileserver.config.FileServerConfig;
-import itx.fileserver.services.dto.FilterConfig;
+import itx.fileserver.dto.FilterConfig;
 import itx.fileserver.dto.UserConfig;
 import org.springframework.http.HttpHeaders;
 

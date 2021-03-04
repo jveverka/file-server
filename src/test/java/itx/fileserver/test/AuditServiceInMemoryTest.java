@@ -2,14 +2,14 @@ package itx.fileserver.test;
 
 import itx.fileserver.services.data.AuditService;
 import itx.fileserver.services.data.inmemory.AuditServiceInmemory;
-import itx.fileserver.services.dto.AuditQuery;
-import itx.fileserver.services.dto.AuditRecord;
+import itx.fileserver.dto.AuditQuery;
+import itx.fileserver.dto.AuditRecord;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.Iterator;
 
-import static itx.fileserver.services.dto.AuditConstants.USER_ACCESS;
+import static itx.fileserver.dto.AuditConstants.USER_ACCESS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AuditServiceInMemoryTest {

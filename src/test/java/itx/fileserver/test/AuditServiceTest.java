@@ -4,8 +4,8 @@ import itx.fileserver.services.data.AuditService;
 import itx.fileserver.services.data.filesystem.AuditServiceFilesystem;
 import itx.fileserver.services.data.filesystem.PersistenceService;
 import itx.fileserver.services.data.inmemory.AuditServiceInmemory;
-import itx.fileserver.services.dto.AuditQuery;
-import itx.fileserver.services.dto.AuditRecord;
+import itx.fileserver.dto.AuditQuery;
+import itx.fileserver.dto.AuditRecord;
 import itx.fileserver.test.mocks.PersistenceServiceImpl;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -15,8 +15,8 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-import static itx.fileserver.services.dto.AuditConstants.FILE_ACCESS;
-import static itx.fileserver.services.dto.AuditConstants.USER_ACCESS;
+import static itx.fileserver.dto.AuditConstants.FILE_ACCESS;
+import static itx.fileserver.dto.AuditConstants.USER_ACCESS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AuditServiceTest {

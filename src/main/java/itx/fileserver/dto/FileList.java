@@ -1,4 +1,4 @@
-package itx.fileserver.services.dto;
+package itx.fileserver.dto;
 
 import java.util.ArrayList;
 import java.util.List;

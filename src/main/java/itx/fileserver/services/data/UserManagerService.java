@@ -1,8 +1,8 @@
 package itx.fileserver.services.data;
 
-import itx.fileserver.services.dto.RoleId;
-import itx.fileserver.services.dto.UserData;
-import itx.fileserver.services.dto.UserId;
+import itx.fileserver.dto.RoleId;
+import itx.fileserver.dto.UserData;
+import itx.fileserver.dto.UserId;
 
 import java.util.Collection;
 import java.util.Optional;

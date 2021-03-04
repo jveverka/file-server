@@ -1,9 +1,9 @@
 package itx.fileserver.services;
 
-import itx.fileserver.services.dto.FileList;
-import itx.fileserver.services.dto.FileStorageInfo;
-import itx.fileserver.services.dto.ResourceAccessInfo;
-import itx.fileserver.services.dto.UserData;
+import itx.fileserver.dto.FileList;
+import itx.fileserver.dto.FileStorageInfo;
+import itx.fileserver.dto.ResourceAccessInfo;
+import itx.fileserver.dto.UserData;
 import org.springframework.core.io.Resource;
 
 import java.io.FileNotFoundException;

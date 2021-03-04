@@ -1,4 +1,4 @@
-package itx.fileserver.services.data.filesystem.dto;
+package itx.fileserver.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

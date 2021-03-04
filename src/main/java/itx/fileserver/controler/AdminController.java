@@ -6,15 +6,15 @@ import itx.fileserver.services.SecurityService;
 import itx.fileserver.services.data.AuditService;
 import itx.fileserver.services.data.FileAccessManagerService;
 import itx.fileserver.services.data.UserManagerService;
-import itx.fileserver.services.dto.AuditQuery;
-import itx.fileserver.services.dto.AuditRecord;
-import itx.fileserver.services.dto.FileStorageInfo;
-import itx.fileserver.services.dto.FilterConfig;
-import itx.fileserver.services.dto.RoleId;
-import itx.fileserver.services.dto.SessionId;
-import itx.fileserver.services.dto.Sessions;
-import itx.fileserver.services.dto.UserData;
-import itx.fileserver.services.dto.UserId;
+import itx.fileserver.dto.AuditQuery;
+import itx.fileserver.dto.AuditRecord;
+import itx.fileserver.dto.FileStorageInfo;
+import itx.fileserver.dto.FilterConfig;
+import itx.fileserver.dto.RoleId;
+import itx.fileserver.dto.SessionId;
+import itx.fileserver.dto.Sessions;
+import itx.fileserver.dto.UserData;
+import itx.fileserver.dto.UserId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static itx.fileserver.services.dto.AuditConstants.ADMIN_ACCESS;
+import static itx.fileserver.dto.AuditConstants.ADMIN_ACCESS;
 
 @RestController
 @RequestMapping(path = "/services/admin")

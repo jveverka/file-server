@@ -1,9 +1,9 @@
 package itx.fileserver.services;
 
-import itx.fileserver.services.dto.RoleId;
-import itx.fileserver.services.dto.SessionId;
-import itx.fileserver.services.dto.Sessions;
-import itx.fileserver.services.dto.UserData;
+import itx.fileserver.dto.RoleId;
+import itx.fileserver.dto.SessionId;
+import itx.fileserver.dto.Sessions;
+import itx.fileserver.dto.UserData;
 
 import java.util.Optional;
 import java.util.Set;

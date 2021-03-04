@@ -1,7 +1,7 @@
 package itx.fileserver.services.data.filesystem;
 
-import itx.fileserver.services.dto.AuditQuery;
-import itx.fileserver.services.dto.AuditRecord;
+import itx.fileserver.dto.AuditQuery;
+import itx.fileserver.dto.AuditRecord;
 
 import java.io.IOException;
 import java.nio.file.Path;

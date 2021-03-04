@@ -1,4 +1,4 @@
-package itx.fileserver.services.dto;
+package itx.fileserver.dto;
 
 import itx.fileserver.services.FileUtils;
 

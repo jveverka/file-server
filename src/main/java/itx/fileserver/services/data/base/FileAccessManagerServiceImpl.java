@@ -1,10 +1,10 @@
 package itx.fileserver.services.data.base;
 
 import itx.fileserver.services.data.FileAccessManagerService;
-import itx.fileserver.services.dto.AccessType;
-import itx.fileserver.services.dto.FileAccessFilter;
-import itx.fileserver.services.dto.FilterConfig;
-import itx.fileserver.services.dto.RoleId;
+import itx.fileserver.dto.AccessType;
+import itx.fileserver.dto.FileAccessFilter;
+import itx.fileserver.dto.FilterConfig;
+import itx.fileserver.dto.RoleId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

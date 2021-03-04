@@ -2,9 +2,9 @@ package itx.fileserver.services.data.inmemory;
 
 import itx.fileserver.config.FileServerConfig;
 import itx.fileserver.services.data.base.UserManagerServiceImpl;
-import itx.fileserver.services.dto.RoleId;
-import itx.fileserver.services.dto.UserData;
-import itx.fileserver.services.dto.UserId;
+import itx.fileserver.dto.RoleId;
+import itx.fileserver.dto.UserData;
+import itx.fileserver.dto.UserId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
