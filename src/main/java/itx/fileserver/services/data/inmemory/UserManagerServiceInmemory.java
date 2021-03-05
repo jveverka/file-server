@@ -20,9 +20,7 @@ public class UserManagerServiceInmemory extends UserManagerServiceImpl {
         this.users = new ConcurrentHashMap<>();
         fileServerConfig.getUsers().forEach(uc->{
             Set<RoleId> roles = new HashSet<>();
-            uc.getRoles().forEach(r-> {
-                roles.add(new RoleId(r));
-            });
+            uc.getRoles().forEach(r-> roles.add(new RoleId(r)));
             UserData userData = new UserData(new UserId(uc.getUsername()), roles, uc.getPassword());
             LOG.info("User: {}", uc.getUsername());
             users.put(userData.getId(), userData);

@@ -7,9 +7,8 @@ import itx.fileserver.dto.UserId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -28,11 +27,12 @@ public abstract class UserManagerServiceImpl implements UserManagerService {
 
     @Override
     public Collection<UserData> getUsers() {
-        return Collections.unmodifiableList(new ArrayList<>(users.values()));
+        return List.copyOf(users.values());
     }
 
     @Override
     public void addUser(UserData userData) {
+        LOG.debug("addUser {}", userData.getId());
         if (users.get(userData.getId()) != null) {
             throw new UnsupportedOperationException();
         }
@@ -42,6 +42,7 @@ public abstract class UserManagerServiceImpl implements UserManagerService {
 
     @Override
     public void removeUser(UserId id) {
+        LOG.debug("removeUser {}", id);
         users.remove(id);
         persist();
     }
