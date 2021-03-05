@@ -4,7 +4,7 @@ import itx.fileserver.services.FileUtils;
 
 public class AuditQuery {
 
-    public final static AuditQuery MATCH_ALL = new AuditQuery();
+    public static final AuditQuery MATCH_ALL = new AuditQuery();
 
     private String userId;
     private Long timeBegin;

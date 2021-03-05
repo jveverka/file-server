@@ -46,7 +46,7 @@ public class AuthController {
     }
 
     @GetMapping("/logout")
-    public ResponseEntity logout() {
+    public ResponseEntity<Void> logout() {
         LOG.info("logout: {}", httpSession.getId());
         SessionId sessionId = new SessionId(httpSession.getId());
         securityService.terminateSession(sessionId);

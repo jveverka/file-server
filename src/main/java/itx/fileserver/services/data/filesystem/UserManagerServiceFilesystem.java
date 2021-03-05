@@ -27,15 +27,13 @@ public class UserManagerServiceFilesystem extends UserManagerServiceImpl {
     public UserManagerServiceFilesystem(Path dataPath, PersistenceService persistenceService) throws IOException {
         this.dataPath = dataPath;
         this.persistenceService = persistenceService;
-        LOG.info("dataPath={}", dataPath.toString());
+        LOG.info("dataPath={}", dataPath);
 
         UserManagerData userManagerData = persistenceService.restore(dataPath, UserManagerData.class);
         this.users = new ConcurrentHashMap<>();
         userManagerData.getUsers().forEach(uc->{
             Set<RoleId> roles = new HashSet<>();
-            uc.getRoles().forEach(r-> {
-                roles.add(new RoleId(r));
-            });
+            uc.getRoles().forEach(r-> roles.add(new RoleId(r)));
             UserData userData = new UserData(new UserId(uc.getUsername()), roles, uc.getPassword());
             LOG.info("User: {}", uc.getUsername());
             users.put(userData.getId(), userData);
@@ -52,15 +50,13 @@ public class UserManagerServiceFilesystem extends UserManagerServiceImpl {
             List<UserConfig> userConfigList = new ArrayList<>();
             users.values().forEach(u->{
                 List<String> roles = new ArrayList<>();
-                u.getRoles().forEach(r->{
-                    roles.add(r.getId());
-                });
+                u.getRoles().forEach(r -> roles.add(r.getId()));
                 userConfigList.add(new UserConfig(u.getId().getId(), u.password(), roles));
             });
             UserManagerData userManagerData = new UserManagerData(anonymousRole.getId(), adminRole.getId(), userConfigList);
             persistenceService.persist(dataPath, userManagerData);
         } catch (IOException e) {
-            LOG.error("Persist ERROR: {}", e);
+            LOG.error("Persist ERROR:", e);
         }
     }
 

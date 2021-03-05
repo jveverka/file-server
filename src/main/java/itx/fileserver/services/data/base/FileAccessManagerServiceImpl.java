@@ -51,7 +51,7 @@ public abstract class FileAccessManagerServiceImpl implements FileAccessManagerS
         if (fileAccessFilters != null) {
             return Collections.unmodifiableList(filters.get(roleId));
         } else {
-            return Collections.unmodifiableList(Collections.EMPTY_LIST);
+            return Collections.emptyList();
         }
     }
 

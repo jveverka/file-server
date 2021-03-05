@@ -173,7 +173,7 @@ public class FileServerController {
             if (userData.isPresent()) {
                 Path sourcePath = Paths.get(contextPath.substring((URI_PREFIX + MOVE_PREFIX).length()));
                 Path destinationPath = Paths.get(moveRequest.getDestinationPath());
-                LOG.info("move: {}->{}", sourcePath.toString(), destinationPath.toString());
+                LOG.info("move: {}->{}", sourcePath, destinationPath);
                 fileService.move(userData.get(), sourcePath, destinationPath);
                 return ResponseEntity.ok().build();
             }
@@ -193,7 +193,7 @@ public class FileServerController {
             Optional<UserData> userData = securityService.isAuthorized(sessionId);
             if (userData.isPresent()) {
                 Path sourcePath = Paths.get(contextPath.substring((URI_PREFIX + AUDIT_PREFIX).length()));
-                LOG.info("audit: {}", sourcePath.toString());
+                LOG.info("audit: {}", sourcePath);
                 ResourceAccessInfo resourceAccessInfo = fileService.getResourceAccessInfo(userData.get(), sourcePath);
                 return ResponseEntity.ok().body(resourceAccessInfo);
             }

@@ -2,7 +2,6 @@ package itx.fileserver.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import itx.fileserver.dto.UserConfig;
 
 import java.util.Collection;
 

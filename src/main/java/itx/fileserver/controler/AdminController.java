@@ -75,7 +75,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/sessions/{sessionId}")
-    public ResponseEntity terminateSession(@PathVariable("sessionId") String sessionId) {
+    public ResponseEntity<Void> terminateSession(@PathVariable("sessionId") String sessionId) {
         LOG.info("terminateSession: {}", sessionId);
         //TODO: http session should be terminated as well
         securityService.terminateSession(new SessionId(sessionId));
@@ -103,13 +103,11 @@ public class AdminController {
     }
 
     @PostMapping("/users/add")
-    public ResponseEntity addUser(@RequestBody UserConfig userConfig) {
+    public ResponseEntity<Void> addUser(@RequestBody UserConfig userConfig) {
         LOG.info("addUser: {}", userConfig.getUsername());
         try {
             Set<RoleId> roles = new HashSet<>();
-            userConfig.getRoles().forEach(r -> {
-                roles.add(new RoleId(r));
-            });
+            userConfig.getRoles().forEach(r -> roles.add(new RoleId(r)));
             UserData userData = new UserData(new UserId(userConfig.getUsername()), roles, userConfig.getPassword());
             userManagerService.addUser(userData);
             Optional<UserData> authorized = securityService.isAuthorized(new SessionId(httpSession.getId()));
@@ -121,7 +119,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/users/remove/{userId}")
-    public ResponseEntity removeUser(@PathVariable("userId") String userId) {
+    public ResponseEntity<Void> removeUser(@PathVariable("userId") String userId) {
         LOG.info("removeUser: {}", userId);
         SessionId sessionId = new SessionId(httpSession.getId());
         Optional<UserData> authorized = securityService.isAuthorized(sessionId);
@@ -144,7 +142,7 @@ public class AdminController {
     }
 
     @PostMapping("/file/access/filters")
-    public ResponseEntity addFileAccessFilter(@RequestBody FilterConfig filterConfig) {
+    public ResponseEntity<Void> addFileAccessFilter(@RequestBody FilterConfig filterConfig) {
         LOG.info("addFileAccessFilter: {} {} {}", filterConfig.getPath(), filterConfig.getAccess(), filterConfig.getRoles());
         fileAccessManagerService.addFilter(filterConfig);
         Optional<UserData> authorized = securityService.isAuthorized(new SessionId(httpSession.getId()));
@@ -153,7 +151,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/file/access/filters")
-    public ResponseEntity removeFileAccessFilter(@RequestBody FilterConfig filterConfig) {
+    public ResponseEntity<Void> removeFileAccessFilter(@RequestBody FilterConfig filterConfig) {
         LOG.info("removeFileAccessFilter: {} {} {}", filterConfig.getPath(), filterConfig.getAccess(), filterConfig.getRoles());
         fileAccessManagerService.removeFilter(filterConfig);
         Optional<UserData> authorized = securityService.isAuthorized(new SessionId(httpSession.getId()));

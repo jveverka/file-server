@@ -23,11 +23,9 @@ public class FileAccessManagerServiceFilesystem extends FileAccessManagerService
         this.filters = new ConcurrentHashMap<>();
         this.filterConfigs = new HashSet<>();
 
-        LOG.info("dataPath={}", dataPath.toString());
+        LOG.info("dataPath={}", dataPath);
         FilterAccessManagerData filterAccessManagerData = persistenceService.restore(dataPath, FilterAccessManagerData.class);
-        filterAccessManagerData.getFilterConfigs().forEach(f -> {
-            addFilter(f);
-        });
+        filterAccessManagerData.getFilterConfigs().forEach(f -> addFilter(f));
     }
 
     @Override
@@ -37,7 +35,7 @@ public class FileAccessManagerServiceFilesystem extends FileAccessManagerService
             FilterAccessManagerData filterAccessManagerData = new FilterAccessManagerData(filterConfigs);
             persistenceService.persist(dataPath, filterAccessManagerData);
         } catch (IOException e) {
-            LOG.error("Persist ERROR: {}", e);
+            LOG.error("Persist ERROR: ", e);
         }
     }
 

@@ -61,7 +61,7 @@ public class PersistenceServiceImpl implements PersistenceService {
                     result.add(auditRecord);
                 }
             } catch (IOException e) {
-                LOG.error("AuditRecord deserialization error: {}", e);
+                LOG.error("AuditRecord deserialization error: ", e);
             }
         });
         return Collections.unmodifiableList(result);

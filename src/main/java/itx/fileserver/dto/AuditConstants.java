@@ -6,16 +6,21 @@ public class AuditConstants {
     public static final CategoryFileAccess FILE_ACCESS = new CategoryFileAccess();
     public static final CategoryAdminAccess ADMIN_ACCESS = new CategoryAdminAccess();
 
-    public static class Category {
+    private AuditConstants() {
     }
 
-    public static class CategoryUserAccess extends Category {
+    public interface Category {
+    }
+
+    public static class CategoryUserAccess implements Category {
+        private CategoryUserAccess() {}
         public static final String NAME = "USER_ACCESS";
         public static final String LOGIN = "LOGIN";
         public static final String LOGOUT = "LOGOUT";
     }
 
-    public static class CategoryFileAccess extends Category {
+    public static class CategoryFileAccess implements Category {
+        private CategoryFileAccess() {}
         public static final String NAME = "FILE_ACCESS";
         public static final String LIST_DIR = "LIST_DIR";
         public static final String DOWNLOAD = "DOWNLOAD";
@@ -25,7 +30,8 @@ public class AuditConstants {
         public static final String MOVE = "MOVE";
     }
 
-    public static class CategoryAdminAccess extends Category {
+    public static class CategoryAdminAccess implements Category {
+        private CategoryAdminAccess() {}
         public static final String NAME = "ADMIN_ACCESS";
         public static final String GET_USERS = "GET_USERS";
         public static final String CREATE_USER = "CREATE_USER";

@@ -44,6 +44,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public UserData createAnonymousSession(SessionId sessionId) {
+        LOG.debug("createAnonymousSession {}", sessionId);
         UserData userData = new UserData(new UserId(sessionId.getId()), userService.getAnonymousRole(), "");
         UserData previousData = anonymousSessions.put(sessionId, userData);
         createAnonymousSessionRecord(previousData, sessionId);
@@ -52,16 +53,19 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public Optional<UserData> isAuthorized(SessionId sessionId) {
+        LOG.debug("isAuthorized {}", sessionId);
         return Optional.ofNullable(authorizedSessions.get(sessionId));
     }
 
     @Override
     public Optional<UserData> isAnonymous(SessionId sessionId) {
+        LOG.debug("isAnonymous {}", sessionId);
         return Optional.ofNullable(anonymousSessions.get(sessionId));
     }
 
     @Override
     public boolean isAuthorizedAdmin(SessionId sessionId) {
+        LOG.debug("isAuthorizedAdmin {}", sessionId);
         UserData userData = authorizedSessions.get(sessionId);
         if (userData != null) {
             return userData.getRoles().contains(userService.getAdminRole());
@@ -71,6 +75,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public Optional<UserData> authorize(SessionId sessionId, String username, String password) {
+        LOG.debug("authorize {} {}", username, sessionId);
         UserId userId = new UserId(username);
         Optional<UserData> userData = userService.getUser(userId);
         if (userData.isPresent() && userData.get().verifyPassword(password)) {
@@ -85,6 +90,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public void terminateSession(SessionId sessionId) {
+        LOG.debug("terminateSession {}", sessionId);
         UserData userDataAuthorized = authorizedSessions.remove(sessionId);
         UserData userDataAnonymous = anonymousSessions.remove(sessionId);
         createLogoutRecord(userDataAuthorized, userDataAnonymous, sessionId);
@@ -92,6 +98,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public Optional<Set<RoleId>> getRoles(SessionId sessionId) {
+        LOG.debug("getRoles {}", sessionId);
         UserData userData = authorizedSessions.get(sessionId);
         if (userData != null) {
             return Optional.of(userData.getRoles());
@@ -106,12 +113,11 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public Sessions getActiveSessions() {
+        LOG.debug("getActiveSessions");
         List<SessionInfo> anonymous = new ArrayList<>();
         List<SessionInfo> users = new ArrayList<>();
         List<SessionInfo> admins = new ArrayList<>();
-        anonymousSessions.forEach((id,user)->{
-            anonymous.add(new SessionInfo(id, user.getId(), user.getRoles()));
-        });
+        anonymousSessions.forEach((id,user) -> anonymous.add(new SessionInfo(id, user.getId(), user.getRoles())));
         authorizedSessions.forEach((id,user)->{
             if (user.getRoles().contains(userService.getAdminRole())) {
                 admins.add(new SessionInfo(id, user.getId(), user.getRoles()));

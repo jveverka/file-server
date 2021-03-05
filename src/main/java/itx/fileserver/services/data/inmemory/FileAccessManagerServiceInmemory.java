@@ -15,9 +15,7 @@ public class FileAccessManagerServiceInmemory extends FileAccessManagerServiceIm
     public FileAccessManagerServiceInmemory(FileServerConfig fileServerConfig) {
         this.filters = new ConcurrentHashMap<>();
         this.filterConfigs = new HashSet<>();
-        fileServerConfig.getFilters().forEach(f -> {
-            addFilter(f);
-        });
+        fileServerConfig.getFilters().forEach(this::addFilter);
     }
 
     @Override

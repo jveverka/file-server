@@ -19,7 +19,7 @@ public class AuditServiceFilesystem implements AuditService {
     private final PersistenceService persistenceService;
 
     public AuditServiceFilesystem(Path path, PersistenceService persistenceService) {
-        LOG.info("AuditServiceFilesystem: path={}", path.toString());
+        LOG.info("AuditServiceFilesystem: path={}", path);
         this.path = path;
         this.persistenceService = persistenceService;
     }
@@ -29,7 +29,7 @@ public class AuditServiceFilesystem implements AuditService {
         try {
             persistenceService.append(path, record);
         } catch (IOException e) {
-            LOG.error("persistence error: {}", e);
+            LOG.error("persistence error:", e);
         }
     }
 
@@ -38,8 +38,8 @@ public class AuditServiceFilesystem implements AuditService {
         try {
             return persistenceService.filterAudits(path, query);
         } catch (IOException e) {
-            LOG.error("persistence error: {}", e);
-            return Collections.EMPTY_LIST;
+            LOG.error("persistence error:", e);
+            return Collections.emptyList();
         }
     }
 
