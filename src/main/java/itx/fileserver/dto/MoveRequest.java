@@ -7,6 +7,10 @@ public class MoveRequest {
     public MoveRequest() {
     }
 
+    public MoveRequest(String destinationPath) {
+        this.destinationPath = destinationPath;
+    }
+
     public String getDestinationPath() {
         return destinationPath;
     }

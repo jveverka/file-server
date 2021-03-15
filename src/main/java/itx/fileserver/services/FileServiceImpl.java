@@ -69,9 +69,7 @@ public class FileServiceImpl implements FileService {
                 .build();
         Collection<AuditRecord> audits = auditService.getAudits(auditQuery);
         ResourceAccessInfo resourceAccessInfo = new ResourceAccessInfo();
-        audits.forEach(a->{
-            resourceAccessInfo.incrementCounter(a.getAction());
-        });
+        audits.forEach(a -> resourceAccessInfo.incrementCounter(a.getAction()));
         return resourceAccessInfo;
     }
 
