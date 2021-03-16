@@ -110,7 +110,7 @@ public class FileServiceImpl implements FileService {
                         File file = fw.toFile();
                         fileList.add(new FileInfo(fw.getFileName().toString(), file.length(), file.lastModified()));
                     } else {
-                        LOG.error("getFilesInfo skipped: {} is not regular file nor directory !", filePath.toString());
+                        LOG.error("getFilesInfo skipped: {} is not regular file nor directory !", filePath);
                     }
                 }
             });
@@ -137,7 +137,7 @@ public class FileServiceImpl implements FileService {
         LOG.info("delete: {}", filePath);
         verifyReadAndWriteAccess(userData, filePath);
         Path resolvedFilePath = this.fileStorageLocation.resolve(filePath).normalize();
-        LOG.info("deleting: {}", resolvedFilePath.toString());
+        LOG.info("deleting: {}", resolvedFilePath);
         if (Files.isDirectory(resolvedFilePath)) {
             FileSystemUtils.deleteRecursively(resolvedFilePath);
         } else {
@@ -163,10 +163,10 @@ public class FileServiceImpl implements FileService {
         Path resolvedSourcePath = this.fileStorageLocation.resolve(sourcePath).normalize();
         Path resolvedDestinationPath = this.fileStorageLocation.resolve(destinationPath).normalize();
         if (Files.isRegularFile(resolvedSourcePath)) {
-            LOG.info("moving file {}->{}", sourcePath.toString(), destinationPath.toString());
+            LOG.info("moving file {}->{}", sourcePath, destinationPath);
             Files.move(resolvedSourcePath, resolvedDestinationPath);
         } else if (Files.isDirectory(resolvedSourcePath)) {
-            LOG.info("moving directory {}->{}", sourcePath.toString(), destinationPath.toString());
+            LOG.info("moving directory {}->{}", sourcePath, destinationPath);
             Files.move(resolvedSourcePath, resolvedDestinationPath);
         } else {
             LOG.error("source must be both file or directory");
