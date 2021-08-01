@@ -42,7 +42,7 @@ FileServer may be configured in several distinct ways. Check
 
 ## Requirements for developers
 * [JDK 11](https://jdk.java.net/11/) or later (JDK 8 is supported as well)
-* [Gradle 6.3](https://gradle.org/install/) or later
+* [Gradle 7.0](https://gradle.org/install/) or later
 
 ## Runtime requirements
 * [JDK 11](https://jdk.java.net/11/) or later (JDK 8 is supported as well)
