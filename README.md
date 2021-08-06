@@ -124,3 +124,42 @@ Variable ``file.server.home`` in ``application.yml`` file defines *base director
 gradle clean build test
 java -jar build/libs/file-server-1.0.1-SNAPSHOT.jar --spring.config.location=file:./src/main/resources/application.yml
 ```
+
+### Build Dockers for x86_64 and ARM64
+```
+export VERSION=1.2.0
+# on x86 AMD64 device:
+docker build -t jurajveverka/file-server:${VERSION}-amd64 --build-arg ARCH=amd64 --file ./Dockerfile . 
+docker push jurajveverka/file-server:${VERSION}-amd64
+
+# on ARM64 v8 device:
+docker build -t jurajveverka/file-server:${VERSION}-arm64v8 --build-arg ARCH=arm64v8 --file ./Dockerfile .
+docker push jurajveverka/file-server:${VERSION}-arm64v8
+
+# on x86 AMD64 device: 
+docker manifest create \
+jurajveverka/file-server:${VERSION} \
+--amend jurajveverka/file-server:${VERSION}-amd64 \
+--amend jurajveverka/file-server:${VERSION}-arm64v8
+
+docker manifest push jurajveverka/file-server:${VERSION}
+```
+
+### Run in Docker
+* Default configuration
+```
+docker run -d --name file-server-1.2.0 \
+  --restart unless-stopped \
+  -e SERVER_PORT=8888 \
+  -p 8888:8888 jurajveverka/file-server:1.2.0
+```
+* Override default application.yml
+```
+docker run -d --name file-server-1.2.0 \
+  --restart unless-stopped \
+  -e SERVER_PORT=8888 \
+  -e APP_CONFIG_PATH=/opt/data/config/application.yml \
+  -v '${FS_CONFIG_DIR}':/opt/data/config \
+  -v '${FS_FILES_DIR}':/opt/data/files \
+  -p 8888:8888 jurajveverka/file-server:1.2.0
+```
