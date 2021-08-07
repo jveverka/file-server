@@ -1,6 +1,6 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Java11](https://img.shields.io/badge/java-11-blue)](https://img.shields.io/badge/java-11-blue)
-[![Gradle](https://img.shields.io/badge/gradle-v6.5-blue)](https://img.shields.io/badge/gradle-v6.5-blue)
+[![Gradle](https://img.shields.io/badge/gradle-v7.0-blue)](https://img.shields.io/badge/gradle-v6.5-blue)
 ![Build and Test](https://github.com/jveverka/file-server/workflows/Build%20and%20Test/badge.svg)
 
 # FileServer 
@@ -146,20 +146,20 @@ docker manifest push jurajveverka/file-server:${VERSION}
 ```
 
 ### Run in Docker
-* Default configuration
-```
-docker run -d --name file-server-1.2.0 \
-  --restart unless-stopped \
-  -e SERVER_PORT=8888 \
-  -p 8888:8888 jurajveverka/file-server:1.2.0
-```
-* Override default application.yml
-```
-docker run -d --name file-server-1.2.0 \
-  --restart unless-stopped \
-  -e SERVER_PORT=8888 \
-  -e APP_CONFIG_PATH=/opt/data/config/application.yml \
-  -v '${FS_CONFIG_DIR}':/opt/data/config \
-  -v '${FS_FILES_DIR}':/opt/data/files \
-  -p 8888:8888 jurajveverka/file-server:1.2.0
-```
+* Run with default configuration.
+  ```
+  docker run -d --name file-server-1.2.0 \
+    --restart unless-stopped \
+    -e SERVER_PORT=8888 \
+    -p 8888:8888 jurajveverka/file-server:1.2.0
+  ```
+* Run with custom ``application.yml``
+  ```
+  docker run -d --name file-server-1.2.0 \
+    --restart unless-stopped \
+    -e SERVER_PORT=8888 \
+    -e APP_CONFIG_PATH=/opt/data/config/application.yml \
+    -v '${FS_CONFIG_DIR}':/opt/data/config \
+    -v '${FS_FILES_DIR}':/opt/data/files \
+    -p 8888:8888 jurajveverka/file-server:1.2.0
+  ```
