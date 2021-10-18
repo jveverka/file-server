@@ -126,14 +126,15 @@ java -jar build/libs/file-server-1.0.1-SNAPSHOT.jar --spring.config.location=fil
 ```
 
 ### Run in Docker
-* Run with default configuration.
+* Run with default configuration [application.yml](src/main/resources/application.yml) - only for demo purposes.
   ```
   docker run -d --name file-server-1.2.0 \
     --restart unless-stopped \
     -e SERVER_PORT=8888 \
     -p 8888:8888 jurajveverka/file-server:1.2.0
   ```
-* Run with custom ``application.yml``
+* Run with custom configuration. Note that customized ``application.yml`` is located at ``${FS_CONFIG_DIR}/application.yml``
+  and ``fileserver.home`` points to ``/opt/data/files``
   ```
   docker run -d --name file-server-1.2.0 \
     --restart unless-stopped \
