@@ -118,13 +118,6 @@ Refer to [attached postman collection](docs/FileServer.postman_collection.json) 
   - user management events
   - file access filter management events  
 
-### Build and Run
-Variable ``fileserver.home`` in ``application.yml`` file defines *base directory* to be exposed via REST APIs.
-```
-gradle clean build test
-java -jar build/libs/file-server-1.0.1-SNAPSHOT.jar --spring.config.location=file:./src/main/resources/application.yml
-```
-
 ### Run in Docker
 * Run with default configuration [application.yml](src/main/resources/application.yml) - only for demo purposes.
   ```
@@ -144,23 +137,11 @@ java -jar build/libs/file-server-1.0.1-SNAPSHOT.jar --spring.config.location=fil
     -v '${FS_FILES_DIR}':/opt/data/files \
     -p 8888:8888 jurajveverka/file-server:1.2.0
   ```
+* Build your own [docker image for amd64 or arm64v8](docs/DockerBuild.md) platform.
 
-### Build and publish Dockers for x86_64 and ARM64
+### Build and Run
+Variable ``fileserver.home`` in ``application.yml`` file defines *base directory* to be exposed via REST APIs.
 ```
-export VERSION=1.2.0
-# on x86 AMD64 device:
-docker build -t jurajveverka/file-server:${VERSION}-amd64 --build-arg ARCH=amd64 --file ./Dockerfile . 
-docker push jurajveverka/file-server:${VERSION}-amd64
-
-# on ARM64 v8 device:
-docker build -t jurajveverka/file-server:${VERSION}-arm64v8 --build-arg ARCH=arm64v8 --file ./Dockerfile .
-docker push jurajveverka/file-server:${VERSION}-arm64v8
-
-# on x86 AMD64 device: 
-docker manifest create \
-jurajveverka/file-server:${VERSION} \
---amend jurajveverka/file-server:${VERSION}-amd64 \
---amend jurajveverka/file-server:${VERSION}-arm64v8
-
-docker manifest push jurajveverka/file-server:${VERSION}
+gradle clean build test
+java -jar build/libs/file-server-1.0.1-SNAPSHOT.jar --spring.config.location=file:./src/main/resources/application.yml
 ```
