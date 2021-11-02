@@ -1,6 +1,6 @@
 ARG ARCH="amd64"
 FROM ${ARCH}/adoptopenjdk:11-jre
-COPY build/libs/file-server-1.2.0-SNAPSHOT.jar /file-server.jar
+COPY build/libs/file-server-*-SNAPSHOT.jar /file-server.jar
 COPY file-server-start.sh /file-server-start.sh
 COPY src/main/resources/application.yml /application.yml
 RUN chmod +x /file-server-start.sh
