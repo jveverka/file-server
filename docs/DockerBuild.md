@@ -1,6 +1,6 @@
 ## Build and publish Dockers for x86_64 and ARM64
 ```
-export VERSION=1.2.2
+export VERSION=1.2.3
 # on x86 AMD64 device:
 docker build -t jurajveverka/file-server:${VERSION}-amd64 --build-arg ARCH=amd64 --file ./Dockerfile . 
 docker push jurajveverka/file-server:${VERSION}-amd64
