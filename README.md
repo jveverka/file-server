@@ -121,21 +121,21 @@ Refer to [attached postman collection](docs/FileServer.postman_collection.json) 
 ### Run in Docker
 * Run with default configuration [application.yml](src/main/resources/application.yml) - only for demo purposes.
   ```
-  docker run -d --name file-server-1.2.3 \
+  docker run -d --name file-server-1.3.0 \
     --restart unless-stopped \
     -e SERVER_PORT=8888 \
-    -p 8888:8888 jurajveverka/file-server:1.2.3
+    -p 8888:8888 jurajveverka/file-server:1.3.0
   ```
 * Run with custom configuration. Note that customized ``application.yml`` is located at ``${FS_CONFIG_DIR}/application.yml``
   and ``fileserver.home`` points to ``/opt/data/files``
   ```
-  docker run -d --name file-server-1.2.3 \
+  docker run -d --name file-server-1.3.0 \
     --restart unless-stopped \
     -e SERVER_PORT=8888 \
     -e APP_CONFIG_PATH=/opt/data/config/application.yml \
     -v '${FS_CONFIG_DIR}':/opt/data/config \
     -v '${FS_FILES_DIR}':/opt/data/files \
-    -p 8888:8888 jurajveverka/file-server:1.2.3
+    -p 8888:8888 jurajveverka/file-server:1.3.0
   ```
 * Build your own [docker image for amd64 or arm64v8](docs/DockerBuild.md) platform.
 
@@ -143,5 +143,5 @@ Refer to [attached postman collection](docs/FileServer.postman_collection.json) 
 Variable ``fileserver.home`` in ``application.yml`` file defines *base directory* to be exposed via REST APIs.
 ```
 gradle clean build test
-java -jar build/libs/file-server-1.2.3-SNAPSHOT.jar --spring.config.location=file:./src/main/resources/application.yml
+java -jar build/libs/file-server-1.3.0-SNAPSHOT.jar --spring.config.location=file:./src/main/resources/application.yml
 ```
