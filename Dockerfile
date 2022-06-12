@@ -1,5 +1,5 @@
 ARG ARCH="amd64"
-FROM ${ARCH}/amazoncorretto:17-alpine3.15
+FROM ${ARCH}/amazoncorretto:17
 COPY build/libs/file-server-*-SNAPSHOT.jar /file-server.jar
 COPY file-server-start.sh /file-server-start.sh
 COPY src/main/resources/application.yml /application.yml
